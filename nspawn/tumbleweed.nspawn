@@ -1,0 +1,11 @@
+[Exec]
+Boot=1
+
+[Files]
+Bind=/dev/dri
+Bind=/dev/shm
+Bind=/dev/input
+Bind=/dev/snd
+Bind=/dev/tty7
+Bind=/dev/tty0
+
