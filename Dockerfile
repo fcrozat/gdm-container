@@ -3,7 +3,7 @@
 
 FROM opensuse/tumbleweed
 RUN zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse
-# gdm ca-certificates-mozilla util-linux gnome-session-wayland 
+# util-linux 
 #&& zypper -n in aaa_base bash filesystem openSUSE-release-ftp systemd glibc-locale gdm zypper ca-certificates ca-certificates-mozilla patterns-gnome-gnome_basic less util-linux vim gnome-session-wayland gtk3-branding-openSUSE adwaita-icon-theme desktop-data-openSUSE
 # gnome-menus-branding-openSUSE
 #RUN flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
