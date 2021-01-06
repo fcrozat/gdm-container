@@ -5,9 +5,9 @@ After=network-online.target
 
 [Service]
 Environment=PODMAN_SYSTEMD_UNIT=%n
-ExecStart=/usr/bin/podman start gdm-test
-ExecStop=/usr/bin/podman stop -t 10 gdm-test
-ExecStopPost=/usr/bin/podman stop -t 10 gdm-test
+ExecStart=/usr/bin/podman start gdm_pod-gdm
+ExecStop=/usr/bin/podman stop -t 10 gdm_pod-gdm
+ExecStopPost=/usr/bin/podman stop -t 10 gdm_pod-gdm
 PIDFile=/run/gdm/gdm.pid
 KillMode=mixed
 Restart=always

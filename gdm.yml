@@ -10,7 +10,7 @@ metadata:
   creationTimestamp: "2021-01-06T14:31:26Z"
   labels:
     app: gdm
-  name: gdm
+  name: gdm_pod
 spec:
   containers:
   - env:
