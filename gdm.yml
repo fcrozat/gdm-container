@@ -1,0 +1,146 @@
+# Generation of Kubernetes YAML is still under development!
+#
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-2.2.0
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2021-01-06T14:31:26Z"
+  labels:
+    app: gdm
+  name: gdm
+spec:
+  containers:
+  - env:
+    - name: PATH
+      value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    - name: TERM
+      value: xterm
+    - name: container
+      value: podman
+    - name: SYSTEMD_IGNORE_CHROOT
+      value: "1"
+    - name: HOSTNAME
+      value: gdm-container
+    image: registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container:latest
+    name: gdm
+    resources: {}
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities: {}
+      privileged: true
+      readOnlyRootFilesystem: false
+      runAsGroup: 0
+      runAsUser: 0
+      seLinuxOptions:
+        type: spc_t
+    volumeMounts:
+    - mountPath: /etc/shadow
+      name: etc-shadow
+      readOnly: true
+    - mountPath: /sys/fs/cgroup
+      name: sys-fs-cgroup
+    - mountPath: /etc/passwd
+      name: etc-passwd
+      readOnly: true
+    - mountPath: /home
+      name: home
+    - mountPath: /var/log
+      name: var-log
+    - mountPath: /tmp
+      name: tmp
+    - mountPath: /etc/vconsole.conf
+      name: etc-vconsole.conf
+      readOnly: true
+    - mountPath: /dev
+      name: dev
+    - mountPath: /etc/X11/xorg.conf.d
+      name: etc-X11-xorg.conf.d
+      readOnly: true
+    - mountPath: /etc/locale.conf
+      name: etc-locale.conf
+      readOnly: true
+    - mountPath: /run
+      name: run
+    - mountPath: /etc/machine-id
+      name: etc-machine-id
+      readOnly: true
+    - mountPath: /etc/sysconfig
+      name: etc-sysconfig
+      readOnly: true
+    - mountPath: /etc/group
+      name: etc-group
+      readOnly: true
+    - mountPath: /proc
+      name: proc
+    workingDir: /
+  volumes:
+  - hostPath:
+      path: /etc/shadow
+      type: File
+    name: etc-shadow
+  - hostPath:
+      path: /sys/fs/cgroup
+      type: Directory
+    name: sys-fs-cgroup
+  - hostPath:
+      path: /etc/passwd
+      type: File
+    name: etc-passwd
+  - hostPath:
+      path: /home
+      type: Directory
+    name: home
+  - hostPath:
+      path: /var/log
+      type: Directory
+    name: var-log
+  - hostPath:
+      path: /tmp
+      type: Directory
+    name: tmp
+  - hostPath:
+      path: /etc/vconsole.conf
+      type: File
+    name: etc-vconsole.conf
+  - hostPath:
+      path: /dev
+      type: Directory
+    name: dev
+  - hostPath:
+      path: /etc/X11/xorg.conf.d
+      type: Directory
+    name: etc-X11-xorg.conf.d
+  - hostPath:
+      path: /etc/locale.conf
+      type: File
+    name: etc-locale.conf
+  - hostPath:
+      path: /run
+      type: Directory
+    name: run
+  - hostPath:
+      path: /etc/machine-id
+      type: File
+    name: etc-machine-id
+  - hostPath:
+      path: /etc/sysconfig
+      type: Directory
+    name: etc-sysconfig
+  - hostPath:
+      path: /etc/group
+      type: File
+    name: etc-group
+  - hostPath:
+      path: /proc
+      type: Directory
+    name: proc
+status: {}
+---
+metadata:
+  creationTimestamp: null
+spec: {}
+status:
+  loadBalancer: {}

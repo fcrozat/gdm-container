@@ -1,0 +1,20 @@
+[Unit]
+Description=gdm container
+Wants=network.target
+After=network-online.target
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+ExecStart=/usr/bin/podman start gdm-test
+ExecStop=/usr/bin/podman stop -t 10 gdm-test
+ExecStopPost=/usr/bin/podman stop -t 10 gdm-test
+PIDFile=/run/gdm/gdm.pid
+KillMode=mixed
+Restart=always
+IgnoreSIGPIPE=no
+BusName=org.gnome.DisplayManager
+ExecReload=/bin/kill -SIGHUP $MAINPID
+KeyringMode=shared
+
+[Install]
+WantedBy=multi-user.target default.target
