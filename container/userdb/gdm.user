@@ -1,0 +1,8 @@
+{
+	"userName" : "gdm",
+	"uid" : 473,
+	"gid" : 473,
+	"realName" : "Gnome Display Manager daemon",
+	"homeDirectory" : "/var/lib/gdm",
+	"shell" : "/usr/sbin/nologin"
+}

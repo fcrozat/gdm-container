@@ -1,0 +1,16 @@
+#!/bin/sh -eu
+
+# This is the uninstall script for gdm when run in a privileged
+# container.
+#
+# The host file system must be mounted at /host
+
+cd /
+PATH="/usr/bin:/usr/sbin"
+
+if [ ! -d /host/etc ] || [ ! -d /host/proc ] || [ ! -d /host/run ]; then
+    echo "gdm-uninstall: host file system is not mounted at /host" >&2
+    exit 1
+fi
+
+# Everything else is settings and should remain

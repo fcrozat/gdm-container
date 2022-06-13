@@ -1,0 +1,31 @@
+#!/bin/sh -eu
+
+# This is the install script for gdm when run in a privileged
+# container.
+#
+# The host file system must be mounted at /host
+
+cd /
+PATH="/usr/bin:/usr/sbin"
+
+if [ ! -d /host/etc ] || [ ! -d /host/proc ] || [ ! -d /host/run ]; then
+    echo "gdm-install: host file system is not mounted at /host" >&2
+    exit 1
+fi
+if [ -f /host/usr/bin/gdm ]; then
+    echo "gdm-install: gdm must not be installed in the host" >&2
+    exit 1
+fi
+
+# For podman, cp a systemd unit for starting on boot
+if [ "${container:-}" = oci ]; then
+    if [ ! -e /host/etc/systemd/system/gdm.service ]; then
+	mkdir -p /host/etc/systemd/system/
+	cp -av /container/systemd/gdm.service /host/etc/systemd/system/
+    fi
+    if [ ! -e /host/etc/userdb/gdm.user ]; then
+	mkdir -p /host/etc/userdb/
+	cp -avr /container/userdb/* /host/etc/userdb
+    fi
+fi
+
