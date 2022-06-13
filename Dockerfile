@@ -16,9 +16,11 @@ RUN systemd-sysusers && systemd-tmpfiles --create
 # avoid this script, best to run gdm directly
 #ENTRYPOINT [ "/usr/lib/X11/display-manager", "start" ]
 
+COPY entrypoint.sh /entrypoint.sh
 COPY container /container
 ENV SYSTEMD_IGNORE_CHROOT=1
-ENTRYPOINT ["/usr/bin/gdm"]
+#ENTRYPOINT ["/usr/bin/gdm"]
+ENTRYPOINT ["/entrypoint.sh"]
 
 LABEL INSTALL="podman run --rm --privileged -v /:/host ${IMAGE} /container/label-install"
 LABEL UNINSTALL="podman run --rm --privileged -v /:/host ${IMAGE} /container/label-uninstall"
