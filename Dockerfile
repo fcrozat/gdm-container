@@ -20,5 +20,5 @@ COPY container /container
 ENV SYSTEMD_IGNORE_CHROOT=1
 ENTRYPOINT ["/usr/bin/gdm"]
 
-LABEL INSTALL="podman run --env container=oci --rm --privileged -v /:/host ${IMAGE} /container/label-install"
-LABEL UNINSTALL="podman run --env container=oci --rm --privileged -v /:/host ${IMAGE} /container/label-uninstall"
+LABEL INSTALL="podman run --rm --privileged -v /:/host ${IMAGE} /container/label-install"
+LABEL UNINSTALL="podman run --rm --privileged -v /:/host ${IMAGE} /container/label-uninstall"
