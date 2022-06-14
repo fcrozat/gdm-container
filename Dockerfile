@@ -20,7 +20,7 @@ COPY entrypoint.sh /entrypoint.sh
 COPY container /container
 ENV SYSTEMD_IGNORE_CHROOT=1
 #ENTRYPOINT ["/usr/bin/gdm"]
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["sh" ,"/entrypoint.sh"]
 
 LABEL INSTALL="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /container/label-install"
 LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /container/label-uninstall"

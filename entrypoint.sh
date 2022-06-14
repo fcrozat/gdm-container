@@ -29,7 +29,7 @@ if [ $(basename "$1") = 'label-install' ] ||
 fi
 
 
-# If no firewalld config is provided, use default one
+# If no gdm config is provided, use default one
 if [ ! "$(ls -A /etc/gdm)" ]; then
     cp -av /usr/share/factory/etc/gdm/* /etc/gdm/
 fi
