@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo downloading systemd service
-curl https://raw.githubusercontent.com/fcrozat/gdm-container/main/gdm.service >  /etc/systemd/system/display-manager.service
+curl https://raw.githubusercontent.com/fcrozat/gdm-container/main/container/systemd/gdm.service >  /etc/systemd/system/display-manager.service
 systemctl daemon-reload
 
 echo deploying container
