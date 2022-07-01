@@ -31,7 +31,7 @@ fi
 if [ "${container:-}" = podman ]; then
     if [ ! -e /host/etc/systemd/system/gdm.service ]; then
 	mkdir -p /host/etc/systemd/system/
-	sed -e "s/%IMAGE%/${IMAGE}/g" /container/systemd/gdm.service > /host/etc/systemd/system/gdm.service
+	sed -e "s,%IMAGE%,${IMAGE},g" /container/systemd/gdm.service > /host/etc/systemd/system/gdm.service
     fi
     if [ ! -e /host/etc/userdb/gdm.user ]; then
 	mkdir -p /host/etc/userdb/
