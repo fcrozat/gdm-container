@@ -27,11 +27,11 @@ if [ $RETVAL -ne 0 ]; then
     exit 1
 fi
 
-# For podman, cp a systemd unit for starting on boot
+# For podman, install a systemd unit for starting on boot and userdb entries
 if [ "${container:-}" = podman ]; then
     if [ ! -e /host/etc/systemd/system/gdm.service ]; then
 	mkdir -p /host/etc/systemd/system/
-	cp -av /container/systemd/gdm.service /host/etc/systemd/system/
+	sed -e "s/%IMAGE%/${IMAGE}/g" /container/systemd/gdm.service > /host/etc/systemd/system/gdm.service
     fi
     if [ ! -e /host/etc/userdb/gdm.user ]; then
 	mkdir -p /host/etc/userdb/
