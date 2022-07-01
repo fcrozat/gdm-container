@@ -16,6 +16,16 @@ if [ -f /host/usr/bin/gdm ]; then
     echo "gdm-install: gdm must not be installed in the host" >&2
     exit 1
 fi
+if [ ! -f /host/usr/lib*/libnss_systemd.so.* ]; then
+    echo "gdm-install: nss-systemd package must be installed on host system" >&2
+    exit 1
+fi
+grep -q 'passwd.*systemd' /host/etc/nsswitch.conf /host/usr/etc/nsswitch.conf
+RETVAL=$?
+if [ $RETVAL -ne 0 ]; then
+    echo "gdm-install: nss-systemd is not configured in nsswitch.conf, check man nss-systemd " >&2
+    exit 1
+fi
 
 # For podman, cp a systemd unit for starting on boot
 if [ "${container:-}" = oci ]; then
