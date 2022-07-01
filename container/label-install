@@ -28,7 +28,7 @@ if [ $RETVAL -ne 0 ]; then
 fi
 
 # For podman, cp a systemd unit for starting on boot
-if [ "${container:-}" = oci ]; then
+if [ "${container:-}" = podman ]; then
     if [ ! -e /host/etc/systemd/system/gdm.service ]; then
 	mkdir -p /host/etc/systemd/system/
 	cp -av /container/systemd/gdm.service /host/etc/systemd/system/
