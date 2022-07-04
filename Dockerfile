@@ -1,9 +1,9 @@
 # Defines the tag for OBS and build script builds:
 #!BuildTag: gdm-container:latest
 
+FROM opensuse/tumbleweed
 ENV IMAGE="registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container:latest"
 
-FROM opensuse/tumbleweed
 LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
 RUN zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse
 
@@ -27,5 +27,5 @@ ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gdm"]
 
 LABEL INSTALL="/usr/bin/docker run --env IMAGE=%{IMAGE} --rm --privileged -v /:/host \${IMAGE} /container/label-install"
-LABEL UNINSTALL="UNINSTALL" value="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /container/label-uninstall"
+LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /container/label-uninstall"
 LABEL RUN="/usr/bin/docker run -d --name ${NAME} --privileged --net=host -v /dev:/dev:rslave -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -v /etc/shadow:/etc/shadow:ro  -v /home:/home -v /run:/run:rslave -v /proc:/proc -v /sys/fs/cgroup:/sys/fs/cgroup -v /var/log:/var/log  -v /etc/vconsole.conf:/etc/vconsole.conf:ro -v /etc/machine-id:/etc/machine-id:ro  -v /etc/sysconfig:/etc/sysconfig:ro -v /etc/X11/xorg.conf.d:/etc/X11/xorg.conf.d:ro -v /tmp:/tmp  -v /etc/locale.conf:/etc/locale.conf:ro  ${IMAGE} /usr/bin/gdm"
