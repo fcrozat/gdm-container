@@ -6,7 +6,7 @@ GDM_ARGS=""
 
 if [ "${DEBUG}" = "1" ]; then
     set -x
-    GDM_ARGS="$FIREWALLD_ARGS --debug"
+    GDM_ARGS="$GDM_ARGS --debug"
 fi
 
 export PATH=/usr/sbin:/sbin:${PATH}
