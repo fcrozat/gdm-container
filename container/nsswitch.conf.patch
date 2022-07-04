@@ -1,0 +1,24 @@
+--- /usr/etc/nsswitch.conf	2022-06-29 16:10:21.000000000 +0200
++++ /etc/nsswitch.conf	2022-07-04 16:42:20.648380137 +0200
+@@ -52,9 +52,9 @@
+ # shadow:    db files
+ # group:     db files
+ 
+-passwd:		compat
+-group:		compat
+-shadow:		compat
++passwd:		compat systemd
++group:		compat [SUCCESS=merge] systemd
++shadow:		compat systemd
+ # Allow initgroups to default to the setting for group.
+ # initgroups:	compat
+ 
+@@ -63,7 +63,7 @@
+ 
+ aliases:	files usrfiles
+ ethers:		files usrfiles
+-gshadow:	files usrfiles
++gshadow:	files usrfiles systemd
+ netgroup:	files nis
+ protocols:	files usrfiles
+ publickey:	files
