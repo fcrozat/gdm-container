@@ -5,7 +5,9 @@ FROM opensuse/tumbleweed
 ENV IMAGE="registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container:latest"
 
 LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
-RUN zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse
+COPY entrypoint.sh /entrypoint.sh
+COPY container /container
+RUN chmod 755 /entrypoint.sh && zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse
 
 # setup the system
 RUN systemd-sysusers && systemd-tmpfiles --create
@@ -19,8 +21,6 @@ RUN systemd-sysusers && systemd-tmpfiles --create
 # avoid this script, best to run gdm directly
 #ENTRYPOINT [ "/usr/lib/X11/display-manager", "start" ]
 
-COPY entrypoint.sh /entrypoint.sh
-COPY container /container
 ENV SYSTEMD_IGNORE_CHROOT=1
 #ENTRYPOINT ["/usr/bin/gdm"]
 ENTRYPOINT ["/entrypoint.sh"]
