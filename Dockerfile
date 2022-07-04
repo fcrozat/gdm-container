@@ -1,7 +1,5 @@
 # Defines the tag for OBS and build script builds:
 #!BuildTag: gdm-container:latest
-#!BuildTag: gdm-container:%%PKG_VERSION%%
-#!BuildTag: gdm-container:%%PKG_VERSION%%-%RELEASE%
 
 ENV IMAGE="registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container:latest"
 
