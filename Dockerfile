@@ -3,6 +3,7 @@
 
 FROM opensuse/tumbleweed
 ENV IMAGE="registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container:latest"
+ENV NAME="gdm"
 
 LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
 COPY entrypoint.sh /entrypoint.sh
