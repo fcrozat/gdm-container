@@ -10,7 +10,7 @@ COPY entrypoint.sh /entrypoint.sh
 COPY container /container
 RUN chmod 755 /entrypoint.sh && zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse nss-systemd patch
 
-RUN mkdir -p /etc/userdb && cp -avr /container/userdb/* /etc/userdb && cp /usr/etc/nsswitch /etc/nsswitch.conf && cd /etc && patch -p0 /container/nsswitch.conf.patch
+RUN mkdir -p /etc/userdb && cp -avr /container/userdb/* /etc/userdb && cp /usr/etc/nsswitch.conf /etc/nsswitch.conf && cd /etc && patch -p0 /container/nsswitch.conf.patch
 
 
 # setup the system
