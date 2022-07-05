@@ -27,6 +27,12 @@ if [ $RETVAL -ne 0 ]; then
     exit 1
 fi
 
+# we need accountsservice on the host for now
+if [ ! -f /host/usr/libexec/accounts-daemon ]; then
+	echo "gdm-install: accountsservice package must be installed on host system" >&2
+	exit 1
+fi
+
 # copy all dbus policies if not existing on host
 for i in /usr/share/dbus-1/system.d/*.conf ; do
 	dbus_policy=$(basename $i)

@@ -10,10 +10,9 @@ Environment=PODMAN_SYSTEMD_UNIT=%n-%i
 Restart=on-failure
 RestartSec=1s
 TimeoutStopSec=70
-Environment=GDM_IMAGE_PATH=%IMAGE%
 ExecStartPre=/bin/rm -f %t/%n.pid %t/%n.ctr-id
-ExecStartPre=-/usr/bin/podman pull ${GDM_IMAGE_PATH}
-ExecStart=/usr/bin/podman container run --cidfile %t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon -d --replace ${PODMAN_EXTRA_ARGS} -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket --network host --privileged --security-opt label=disable --tz=local --pid host --userns=keep-id --name gdm ${GDM_IMAGE_PATH}
+ExecStartPre=-/usr/bin/podman pull %IMAGE%
+ExecStart=/usr/bin/podman container run --cidfile %t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon -d --replace -v /dev:/dev:rslave -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -v /etc/shadow:/etc/shadow:ro  -v /home:/home -v /run:/run:rslave -v /proc:/proc -v /sys/fs/cgroup:/sys/fs/cgroup -v /var/log:/var/log  -v /etc/vconsole.conf:/etc/vconsole.conf:ro -v /etc/machine-id:/etc/machine-id:ro  -v /etc/sysconfig:/etc/sysconfig:ro -v /etc/X11/xorg.conf.d:/etc/X11/xorg.conf.d:ro -v /tmp:/tmp  -v /etc/locale.conf:/etc/locale.conf:ro -v /etc/gdm:/etc/gdm:ro --network host --privileged --security-opt label=disable --tz=local --pid host --name gdm %IMAGE%
 ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.ctr-id -t 10
 ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/%n.ctr-id
 PIDFile=/run/gdm/gdm.pid
