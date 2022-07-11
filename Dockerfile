@@ -30,6 +30,6 @@ ENV SYSTEMD_IGNORE_CHROOT=1
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gdm"]
 
-LABEL INSTALL="/usr/bin/docker run --env IMAGE=${IMAGE} --rm --privileged -v /:/host \${IMAGE} /container/label-install"
-LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /container/label-uninstall"
+LABEL INSTALL="/usr/bin/docker run --env IMAGE=${IMAGE} --rm --privileged -v /:/host \${IMAGE} /bin/bash /container/label-install"
+LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /bin/bash /container/label-uninstall"
 LABEL RUN="/usr/bin/docker run --rm --replace -d --name ${NAME} --privileged --net=host -v /dev:/dev:rslave -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -v /etc/shadow:/etc/shadow:ro  -v /home:/home -v /run:/run:rslave -v /proc:/proc -v /sys/fs/cgroup:/sys/fs/cgroup -v /var/log:/var/log  -v /etc/vconsole.conf:/etc/vconsole.conf:ro -v /etc/machine-id:/etc/machine-id:ro  -v /etc/sysconfig:/etc/sysconfig:ro -v /etc/X11/xorg.conf.d:/etc/X11/xorg.conf.d:ro -v /tmp:/tmp  -v /etc/locale.conf:/etc/locale.conf:ro -v /etc/gdm:/etc/gdm:ro  ${IMAGE} /usr/bin/gdm"
