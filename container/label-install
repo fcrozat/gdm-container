@@ -36,6 +36,7 @@ if [ ! -e /host/etc/nsswitch.conf ]; then
 		exit 1
 	fi
 	cd -
+    fi
 else
 	grep -q 'passwd.*systemd' /host/etc/nsswitch.conf
 	RETVAL=$?
@@ -43,7 +44,7 @@ else
 		echo "gdm-install: nss-systemd is not configured in /etc/nsswitch.conf nor /usr/etc/nsswitch.conf, check man nss-systemd " >&2
 	        echo "try applying the following patch to /etc/nsswitch.conf (/usr/etc/nsswitch.conf is the umodified file) " >&2
 		cat /container/nsswitch.conf.patch >&2
-	exit 1
+		exit 1
 	fi
 fi
 
