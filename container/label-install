@@ -26,7 +26,7 @@ if [ ! -e /host/etc/nsswitch.conf ]; then
     if [ $RETVAL -ne 0 ]; then
 	cp /host/usr/etc/nsswitch.conf /host/etc/nsswitch.conf
 	cd /host/etc
-	patch -p0 -b .gdm-installer < /container/nsswitch.conf.patch
+	patch -p0 -b -z .gdm-installer < /container/nsswitch.conf.patch
 	RETVAL=$?
 	if [ $RETVAL -ne 0 ]; then
 		echo "unable to create /etc/nsswitch.conf with nss-systemd enabled " >&2
