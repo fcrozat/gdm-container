@@ -23,8 +23,26 @@ fi
 grep -q 'passwd.*systemd' /host/etc/nsswitch.conf /host/usr/etc/nsswitch.conf
 RETVAL=$?
 if [ $RETVAL -ne 0 ]; then
-    echo "gdm-install: nss-systemd is not configured in nsswitch.conf, check man nss-systemd " >&2
-    exit 1
+    if [ ! -e /host/etc/nsswitch.conf ]; then
+	cp /host/usr/etc/nsswitch.conf /host/etc/nsswitch.conf
+	cd /host/etc
+	patch -p0 -b .gdm-installer < /container/nsswitch.conf.patch
+	RETVAL=$?
+	if [ $RETVAL -ne 0 ]; then
+		echo "unable to create /etc/nsswitch.conf with nss-systemd enabled " >&2
+    		echo "gdm-install: nss-systemd is not configured in /etc/nsswitch.conf nor /usr/etc/nsswitch.conf, check man nss-systemd " >&2
+        	echo "try applying the following patch to /etc/nsswitch.conf (/usr/etc/nsswitch.conf is the umodified file) " >&2
+		cat /container/nsswitch.conf.patch >&2
+		exit 1
+	fi
+	cd -
+    else 
+    	echo "gdm-install: nss-systemd is not configured in /etc/nsswitch.conf nor /usr/etc/nsswitch.conf, check man nss-systemd " >&2
+        echo "try applying the following patch to /etc/nsswitch.conf (/usr/etc/nsswitch.conf is the umodified file) " >&2
+	cat /container/nsswitch.conf.patch >&2
+	exit 1
+    fi
+
 fi
 
 # we need accountsservice on the host for now
