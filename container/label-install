@@ -20,10 +20,10 @@ if [ ! -f /host/usr/lib*/libnss_systemd.so.* ]; then
     echo "gdm-install: nss-systemd package must be installed on host system" >&2
     exit 1
 fi
-grep -q 'passwd.*systemd' /host/etc/nsswitch.conf /host/usr/etc/nsswitch.conf
-RETVAL=$?
-if [ $RETVAL -ne 0 ]; then
-    if [ ! -e /host/etc/nsswitch.conf ]; then
+if [ ! -e /host/etc/nsswitch.conf ]; then
+    grep -q 'passwd.*systemd' /host/usr/etc/nsswitch.conf
+    RETVAL=$?
+    if [ $RETVAL -ne 0 ]; then
 	cp /host/usr/etc/nsswitch.conf /host/etc/nsswitch.conf
 	cd /host/etc
 	patch -p0 -b .gdm-installer < /container/nsswitch.conf.patch
@@ -36,14 +36,17 @@ if [ $RETVAL -ne 0 ]; then
 		exit 1
 	fi
 	cd -
-    else 
-    	echo "gdm-install: nss-systemd is not configured in /etc/nsswitch.conf nor /usr/etc/nsswitch.conf, check man nss-systemd " >&2
-        echo "try applying the following patch to /etc/nsswitch.conf (/usr/etc/nsswitch.conf is the umodified file) " >&2
-	cat /container/nsswitch.conf.patch >&2
+else
+	grep -q 'passwd.*systemd' /host/etc/nsswitch.conf
+	RETVAL=$?
+	if [ $RETVAL -ne 0 ]; then
+		echo "gdm-install: nss-systemd is not configured in /etc/nsswitch.conf nor /usr/etc/nsswitch.conf, check man nss-systemd " >&2
+	        echo "try applying the following patch to /etc/nsswitch.conf (/usr/etc/nsswitch.conf is the umodified file) " >&2
+		cat /container/nsswitch.conf.patch >&2
 	exit 1
-    fi
-
+	fi
 fi
+
 
 # we need accountsservice on the host for now
 if [ ! -f /host/usr/libexec/accounts-daemon ]; then
@@ -72,6 +75,9 @@ if [ "${container:-}" = podman ]; then
     if [ ! -d /host/etc/gdm ]; then
 	mkdir -p /host/etc/gdm
 	cp -avr /etc/gdm/* /host/etc/gdm/
+    fi
+    if [ ! -e /host/etc/sysconfig/displaymanager ]; then
+	cp -avr /etc/sysconfig/displaymanager /host/etc/sysconfig/
     fi
 fi
 
