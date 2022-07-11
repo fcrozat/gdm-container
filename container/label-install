@@ -56,7 +56,7 @@ if [ ! -f /host/usr/libexec/accounts-daemon ]; then
 fi
 
 # copy all dbus policies if not existing on host
-for i in /usr/share/dbus-1/system.d/*.conf ; do
+for i in /usr/share/dbus-1/system.d/gdm.conf ; do
 	dbus_policy=$(basename $i)
 	if [ ! -e /host/$i ] && [ ! -e /host/etc/dbus-1/system.d/$dbus_policy ] ; then
 		cp -av $i /host/etc/dbus-1/system.d/$dbus_policy

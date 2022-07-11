@@ -7,6 +7,8 @@ The purpose of this container is to deploy and start GDM in a container, indepen
 * on host, install podman and accountsservice packages
 * run as root: podman container runlabel install registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container
 * systemctl daemon-reload
+* systemctl reload dbus
+* systemctl restart accounts-daemon (ensure it uses nss-systemd)
 
 
 This will download gdm container from Open Build Service registry (it is a openSUSE Tumbleweed container with bare minimum to start GNOME), recreate a container locally and deploy a systemd service which is replacing display-manager.service systemd service (used on openSUSE / SLE).
