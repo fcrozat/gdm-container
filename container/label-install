@@ -70,7 +70,7 @@ systemd-tmpfiles --root=/host --create /usr/lib/tmpfiles.d/gdm.conf
 if [ "${container:-}" = podman ]; then
     if [ ! -e /host/etc/systemd/system/gdm.service ]; then
 	mkdir -p /host/etc/systemd/system/
-	sed -e "s,%IMAGE%,${IMAGE},g" /container/systemd/gdm.service > /host/etc/systemd/system/gdm.service
+	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_OPTIONS%,%{PODMAN_RUN_GDM_OPTIONS},g" /container/systemd/gdm.service > /host/etc/systemd/system/gdm.service
     fi
     if [ ! -e /host/etc/userdb/gdm.user ]; then
 	mkdir -p /host/etc/userdb/
