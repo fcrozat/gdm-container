@@ -74,8 +74,13 @@ if [ "${container:-}" = podman ]; then
 	cp -avr /container/userdb/* /host/etc/userdb
     fi
 
-	# ensure all directories used by gdm are created on the host
-	systemd-tmpfiles --root=/host --create /usr/lib/tmpfiles.d/gdm.conf
+    # ensure all directories used by gdm are created on the host
+    if [ ! -e /host/usr/lib/tmpfiles.d/gdm.conf -a ! -e /host/etc/tmpfiles.d/gdm.conf ]; then
+	cp -av /container/usr/lib/tmpfiles.d/gdm.conf /host/etc/tmpfiles.d/
+    fi
+
+    # yes, this is ugly but --root is bypassing userdb
+    chroot /host /usr/bin/systemd-tmpfiles -E --create /etc/tmpfiles.d/gdm.conf
 
     if [ ! -d /host/etc/gdm ]; then
 	mkdir -p /host/etc/gdm

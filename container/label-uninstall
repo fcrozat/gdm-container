@@ -14,7 +14,7 @@ if [ ! -d /host/etc ] || [ ! -d /host/proc ] || [ ! -d /host/run ]; then
 fi
 
 # removing installed files
-rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/gdm.service,/etc/gdm,etc/dbus-1/system.d/gdm.conf} /host/etc/userdb/{gdm.group,gdm.user,473.group,473.user}
-systemd-tmpfiles --root=/host --remove /usr/lib/tmpfiles.d/gdm.conf || true
+systemd-tmpfiles --root=/host --remove /etc/tmpfiles.d/gdm.conf || true
+rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/gdm.service,/etc/gdm,etc/dbus-1/system.d/gdm.conf} /host/etc/userdb/{gdm.group,gdm.user,473.group,473.user} /host/etc/tmpfiles.d/gdm.conf
 
 # Everything else is settings and should remain
