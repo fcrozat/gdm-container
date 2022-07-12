@@ -63,6 +63,9 @@ for i in /usr/share/dbus-1/system.d/gdm.conf ; do
 	fi
 done
 
+# ensure all directories used by gdm are created on the host
+systemd-tmpfiles --root=/host --create /usr/lib/tmpfiles.d/gdm.conf
+
 # For podman, install a systemd unit for starting on boot and userdb entries and default config files for gdm
 if [ "${container:-}" = podman ]; then
     if [ ! -e /host/etc/systemd/system/gdm.service ]; then
