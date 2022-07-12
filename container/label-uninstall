@@ -9,7 +9,7 @@ cd /
 PATH="/usr/bin:/usr/sbin"
 
 if [ ! -d /host/etc ] || [ ! -d /host/proc ] || [ ! -d /host/run ]; then
-    echo "gdm-uninstall: host file system is not mounted at /host" >&2
+    echo "gdm-uninstall: host file system is not mounted at /host"
     exit 1
 fi
 
