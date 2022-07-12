@@ -80,7 +80,7 @@ if [ "${container:-}" = podman ]; then
     fi
 
     # yes, this is ugly but --root is bypassing userdb
-    bwrap --dev-bind / / --bind /host/etc/passwd /etc/passwd     /usr/bin/systemd-tmpfiles -E --create /usr/lib/tmpfiles.d/gdm.conf
+    bwrap --dev-bind / / --bind-ro /etc/passwd /host/etc/passwd --bind-ro /etc/group /host/etc/group --bind-ro /usr/share/factory /host/usr/share/factory /usr/bin/systemd-tmpfiles -E --create --root=/host  /usr/lib/tmpfiles.d/gdm.conf
 
     if [ ! -d /host/etc/gdm ]; then
 	mkdir -p /host/etc/gdm
