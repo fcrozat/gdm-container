@@ -29,6 +29,6 @@ ENV SYSTEMD_IGNORE_CHROOT=1
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gdm"]
 
-LABEL INSTALL="/usr/bin/docker run --env IMAGE=${IMAGE} --env PODMAN_RUN_GDM_OPTIONS=${PODMAN_RUN_GDM_OPTIONS} --rm --privileged -v /:/host \${IMAGE} /bin/bash /container/label-install"
+LABEL INSTALL="/usr/bin/docker run --env IMAGE=${IMAGE} --env PODMAN_RUN_GDM_OPTIONS=\"${PODMAN_RUN_GDM_OPTIONS}\" --rm --privileged -v /:/host \${IMAGE} /bin/bash /container/label-install"
 LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /bin/bash /container/label-uninstall"
 LABEL RUN="/usr/bin/docker run --replace --name ${NAME} ${PODMAN_RUN_GDM_OPTIONS} ${IMAGE} /usr/bin/gdm"
