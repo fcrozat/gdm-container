@@ -20,6 +20,10 @@ if [ ! -f /host/usr/lib*/libnss_systemd.so.* ]; then
     echo "gdm-install: nss-systemd package must be installed on host system"
     exit 1
 fi
+if [ ! -f /host/usr/lib/systemd/systemd-userdbd ]; then
+    echo "gdm-install: systemd-experimental package must be installed on host system"
+    exit 1
+fi
 if [ ! -e /host/etc/nsswitch.conf ]; then
     grep -q 'passwd.*systemd' /host/usr/etc/nsswitch.conf
     RETVAL=$?

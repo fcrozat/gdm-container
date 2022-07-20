@@ -4,7 +4,7 @@ The purpose of this container is to deploy and start GDM in a container, indepen
 (this might be useful when using a read-only root installation, like openSUSE MicroOS).
 
 ## To deploy the container
-* on host, install podman, accountsservice and nss-systemd packages
+* on host, install the following packages: podman, accountsservice, nss-systemd, systemd-experimental
 * ensure SELinux is configured in Permissive mode
 * run as root: podman container runlabel install registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container
 * systemctl daemon-reload
