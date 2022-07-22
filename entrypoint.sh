@@ -23,8 +23,7 @@ start_dbus() {
 #
 
 # shortcut for podman runlabel calls
-if [ $(basename "$1") = 'label-install' ] ||
-       [ $(basename "$1") = 'label-uninstall' ]; then
+if [ $(basename "$1") = 'label-install' ] || [ $(basename "$1") = 'label-uninstall' ] || [ $(basename "$1") = 'systemd' ]; then
     exec "$@"
 fi
 
