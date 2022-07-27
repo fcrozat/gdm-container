@@ -20,6 +20,9 @@ RUN mkdir -p /etc/userdb && cp -avr /container/userdb/* /etc/userdb && cp /usr/e
 
 # setup the system
 RUN systemd-sysusers && systemd-tmpfiles --create
+
+# cleanup systemd setup
+RUN rm -f /etc/systemd/system/getty.target.wants/getty@tty1.service
 # gnome-menus-branding-openSUSE
 #RUN flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 #RUN flatpak install --noninteractive org.gnome.Nautilus

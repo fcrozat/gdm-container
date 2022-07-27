@@ -72,6 +72,9 @@ if [ "${container:-}" = podman ]; then
     if [ ! -e /host/etc/systemd/system/gdm.service ]; then
 	mkdir -p /host/etc/systemd/system/
 	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_STANDALONE_OPTIONS%,_PODMAN_RUN_GDM_STANDALONE_OPTIONS_,g" /container/systemd/gdm.service > /host/etc/systemd/system/gdm.service
+    fi
+    if [ ! -e /host/etc/systemd/system/gdm-systemd.service ]; then
+	mkdir -p /host/etc/systemd/system/
 	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_SYSTEMD_OPTIONS%,_PODMAN_RUN_GDM_SYSTEMD_OPTIONS_,g" /container/systemd/gdm-systemd.service > /host/etc/systemd/system/gdm-systemd.service
     fi
     if [ ! -e /host/etc/userdb/gdm.user ]; then
