@@ -1,9 +1,28 @@
+# SPDX-License-Identifier: MIT
 # Defines the tag for OBS and build script builds:
-#!BuildTag: gdm-container:latest
+#!BuildTag: suse/alp/workloads/gdm-container:0.1
+#!BuildTag: suse/alp/workloads/gdm-container:0.1-%RELEASE%
+#!BuildTag: suse/alp/workloads/gdm-container:latest
 
 FROM opensuse/tumbleweed
 
 LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
+ARG GDM_IMAGE_URL="registry.opensuse.org/suse/alp/workloads/tumbleweed_containers/gdm-container:latest"
+
+# Define labels according to https://en.opensuse.org/Building_derived_containers
+# labelprefix=com.suse.application.gdm
+LABEL org.opencontainers.image.title="GDM Desktop Container Image"
+LABEL org.opencontainers.image.description="GDM container based on Tumbleweed"
+LABEL org.opencontainers.image.version="0.1"
+LABEL org.opencontainers.image.url="https://github.com/fcrozat/gdm-container/"
+LABEL org.opencontainers.image.created="%BUILDTIME%"
+LABEL org.opensuse.reference="registry.opensuse.org/suse/alp/workloads/tumbleweed_containers/gdm-container:0.1-%RELEASE%"
+LABEL org.openbuildservice.disturl="%DISTURL%"
+LABEL com.suse.supportlevel="techpreview"
+LABEL com.suse.eula="beta"
+LABEL com.suse.image-type="application"
+LABEL com.suse.release-stage="alpha"
+# endlabelprefix
 
 RUN zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse nss-systemd patch
 
@@ -34,7 +53,7 @@ ENV SYSTEMD_IGNORE_CHROOT=1
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gdm"]
 
-ENV IMAGE="registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container:latest"
+ENV IMAGE=$GDM_IMAGE_URL
 ENV NAME="gdm"
 
 LABEL INSTALL="/usr/bin/docker run --env IMAGE=${IMAGE} --rm --privileged -v /:/host \${IMAGE} /bin/bash /container/label-install"
