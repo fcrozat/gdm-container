@@ -10,7 +10,7 @@ LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
 ARG GDM_IMAGE_URL="registry.opensuse.org/suse/alp/workloads/tumbleweed_containers/gdm-container:latest"
 
 # Define labels according to https://en.opensuse.org/Building_derived_containers
-# labelprefix=com.suse.application.gdm
+# labelprefix=com.suse.alp.workloads.gdm
 LABEL org.opencontainers.image.title="GDM Desktop Container Image"
 LABEL org.opencontainers.image.description="GDM container based on Tumbleweed"
 LABEL org.opencontainers.image.version="0.1"
