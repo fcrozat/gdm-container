@@ -6,7 +6,7 @@ The purpose of this container is to deploy and start GDM in a container, indepen
 ## To deploy the container
 * on host, install the following packages: podman, accountsservice, nss-systemd, systemd-experimental
 * ensure SELinux is configured in Permissive mode
-* run as root: podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containers/suse/alp/workloads/gdm-container:latest
+* run as root: podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:latest
 * systemctl daemon-reload
 * systemctl reload dbus
 * systemctl restart accounts-daemon (ensure it uses nss-systemd)
@@ -17,15 +17,15 @@ This will download gdm container from Open Build Service registry (it is a openS
 ## To run gdm
 * as standalone process in container
 ** beware there is still some dbus activation issue after login in gdm
-** either use: podman container runlabel run registry.opensuse.org/suse/alp/workloads/tumbleweed_containers/suse/alp/workloads/gdm-container:latest
+** either use: podman container runlabel run registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:latest
 ** or systemctl start gdm
 * with systemd running in container
-** podman container runlabel run-systemd registry.opensuse.org/suse/alp/workloads/tumbleweed_containers/suse/alp/workloads/gdm-container:latest
+** podman container runlabel run-systemd registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:latest
 ** or systemctl start gdm-systemd (still a bit buggy)
 
 
 ## To uninstall the deployed files:
-* run as root: podman container runlabel uninstall registry.opensuse.org/suse/alp/workloads/tumbleweed_containers/suse/alp/workloads/gdm-container:latest
+* run as root: podman container runlabel uninstall registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:latest
 
 ## Security notice
 This container is NOT SECURED at all: it is running privileged and can access host system. The purpose of this container is to have another way to deploy gdm, not to try to secure it at all.
