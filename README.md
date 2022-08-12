@@ -17,10 +17,10 @@ This will download gdm container from Open Build Service registry (it is a openS
 ## To run gdm
 * as standalone process in container
 ** beware there is still some dbus activation issue after login in gdm
-** either use: podman container runlabel run registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest
+** either use: podman container runlabel --name gdm run registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest
 ** or systemctl start gdm
 * with systemd running in container
-** podman container runlabel run-systemd registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest
+** podman container runlabel run-systemd --name gdm registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest
 ** or systemctl start gdm-systemd (still a bit buggy)
 
 
