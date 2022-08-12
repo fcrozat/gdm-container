@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: MIT
 # Defines the tag for OBS and build script builds:
-#!BuildTag: suse/alp/workloads/gdm-container:0.1
-#!BuildTag: suse/alp/workloads/gdm-container:0.1-%RELEASE%
-#!BuildTag: suse/alp/workloads/gdm-container:latest
+#!BuildTag: suse/alp/workloads/gdm:0.1
+#!BuildTag: suse/alp/workloads/gdm:0.1-%RELEASE%
+#!BuildTag: suse/alp/workloads/gdm:latest
 
 FROM opensuse/tumbleweed
 
 LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
-#ARG GDM_IMAGE_URL="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:latest"
+#ARG GDM_IMAGE_URL="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest"
 
 # Define labels according to https://en.opensuse.org/Building_derived_containers
 # labelprefix=com.suse.alp.workloads.gdm
@@ -16,7 +16,7 @@ LABEL org.opencontainers.image.description="GDM container based on Tumbleweed"
 LABEL org.opencontainers.image.version="0.1"
 LABEL org.opencontainers.image.url="https://github.com/fcrozat/gdm-container/"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
-LABEL org.opensuse.reference="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:0.1-%RELEASE%"
+LABEL org.opensuse.reference="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:0.1-%RELEASE%"
 LABEL org.openbuildservice.disturl="%DISTURL%"
 LABEL com.suse.supportlevel="techpreview"
 LABEL com.suse.eula="beta"

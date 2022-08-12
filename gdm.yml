@@ -24,7 +24,7 @@ spec:
       value: "1"
     - name: HOSTNAME
       value: gdm-container
-    image: registry.opensuse.org/home/fcrozat/branches/opensuse/templates/images/tumbleweed/containers/gdm-container:latest
+    image: registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest
     name: gdm
     resources: {}
     securityContext:
