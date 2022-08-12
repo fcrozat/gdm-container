@@ -7,7 +7,7 @@
 FROM opensuse/tumbleweed
 
 LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
-ARG GDM_IMAGE_URL="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:latest"
+#ARG GDM_IMAGE_URL="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm-container:latest"
 
 # Define labels according to https://en.opensuse.org/Building_derived_containers
 # labelprefix=com.suse.alp.workloads.gdm
@@ -53,10 +53,10 @@ ENV SYSTEMD_IGNORE_CHROOT=1
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["gdm"]
 
-ENV IMAGE=$GDM_IMAGE_URL
+#ENV IMAGE=$GDM_IMAGE_URL
 ENV NAME="gdm"
 
-LABEL INSTALL="/usr/bin/docker run --env IMAGE=${IMAGE} --rm --privileged -v /:/host \${IMAGE} /bin/bash /container/label-install"
+LABEL INSTALL="/usr/bin/docker run --rm --privileged -v /:/host \${IMAGE} /bin/bash /container/label-install"
 LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host ${IMAGE} /bin/bash /container/label-uninstall"
 LABEL RUN="/usr/bin/docker run --replace --name ${NAME} ${PODMAN_RUN_GDM_STANDALONE_OPTIONS} ${IMAGE} /usr/bin/gdm"
 LABEL RUN_SYSTEMD="/usr/bin/docker run --replace --name ${NAME} ${PODMAN_RUN_GDM_SYSTEMD_OPTIONS} ${IMAGE}"
