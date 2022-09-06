@@ -15,6 +15,8 @@ fi
 
 # removing installed files
 systemd-tmpfiles --root=/host --remove /etc/tmpfiles.d/gdm.conf || true
-rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/{gdm,gdm-systemd}.service,/etc/gdm,etc/dbus-1/system.d/gdm.conf} /host/etc/userdb/{gdm.group,gdm.user,473.group,473.user} /host/etc/tmpfiles.d/gdm.conf
+USERID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 3)
+GROUPID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 4)
+rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/{gdm,gdm-systemd}.service,/etc/gdm,etc/dbus-1/system.d/gdm.conf} /host/etc/userdb/{gdm.group,gdm.user,$USERID.user,$GROUPID.group} /host/etc/tmpfiles.d/gdm.conf
 
 # Everything else is settings and should remain

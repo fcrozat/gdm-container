@@ -79,7 +79,14 @@ if [ "${container:-}" = podman ]; then
     fi
     if [ ! -e /host/etc/userdb/gdm.user ]; then
 	mkdir -p /host/etc/userdb/
-	cp -avr /container/userdb/* /host/etc/userdb
+	MIN_SYSTEM_USER=$(chroot /host /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $3}' | sort -n | head -1)
+	MIN_SYSTEM_GROUP=$(chroot /host /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $4}' | sort -n | head -1)
+	USERID=$(expr $MIN_SYSTEM_USER - 1)
+	GROUPID=$(expr $MIN_SYSTEM_GROUP - 1)
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" /container/userdb/gdm.user > /host/etc/userdb/gdm.user
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" /container/userdb/gdm.group > /host/etc/userdb/gdm.group
+	ln -f -s gdm.user /host/etc/userdb/$USERID.user
+	ln -f -s gdm.group /host/etc/userdb/$GROUPID.group
     fi
 
     # ensure all directories used by gdm are created on the host

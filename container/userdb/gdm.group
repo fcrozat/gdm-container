@@ -1,4 +1,4 @@
 {
 	"groupName" : "gdm",
-	"gid" : 473
+	"gid" : %GROUPID%
 }
