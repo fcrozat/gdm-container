@@ -17,10 +17,9 @@ LABEL org.opencontainers.image.url="https://github.com/fcrozat/gdm-container/"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
 LABEL org.opensuse.reference="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:0.1-%RELEASE%"
 LABEL org.openbuildservice.disturl="%DISTURL%"
-LABEL com.suse.supportlevel="techpreview"
 LABEL com.suse.eula="beta"
 LABEL com.suse.image-type="application"
-LABEL com.suse.release-stage="alpha"
+LABEL com.suse.release-stage="prototype"
 # endlabelprefix
 
 RUN zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse nss-systemd patch xterm systemd-icon-branding
