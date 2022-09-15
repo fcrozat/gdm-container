@@ -54,4 +54,4 @@ CMD ["gdm"]
 LABEL INSTALL="/usr/bin/docker run --env IMAGE=IMAGE --rm --privileged -v /:/host IMAGE /bin/bash /container/label-install"
 LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host IMAGE /bin/bash /container/label-uninstall"
 LABEL RUN="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_STANDALONE_OPTIONS} IMAGE /usr/bin/gdm"
-LABEL RUN_SYSTEMD="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_SYSTEMD_OPTIONS} IMAGE"
+LABEL RUN-SYSTEMD="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_SYSTEMD_OPTIONS} IMAGE"
