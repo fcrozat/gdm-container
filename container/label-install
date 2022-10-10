@@ -7,102 +7,111 @@
 
 cd /
 PATH="/usr/bin:/usr/sbin"
+MISSING_PACKAGES=0
+HOST=/host
+ORIGIN=
 
-if [ ! -d /host/etc ] || [ ! -d /host/proc ] || [ ! -d /host/run ]; then
-    echo "gdm-install: host file system is not mounted at /host"
+if [ ! -d $HOST/etc ] || [ ! -d $HOST/proc ] || [ ! -d $HOST/run ]; then
+    echo "gdm-install: host file system is not mounted at $HOST"
     exit 1
 fi
-if [ -f /host/usr/bin/gdm ]; then
-    echo "gdm-install: gdm must not be installed in the host"
-    exit 1
+if [ -f $HOST/usr/bin/gdm ]; then
+    echo "gdm-install: gdm must not be installed in the host."
+    MISSING_PACKAGES=1
 fi
-if [ ! -f /host/usr/lib*/libnss_systemd.so.* ]; then
-    echo "gdm-install: nss-systemd package must be installed on host system"
-    exit 1
+if [ ! -f $HOST/usr/lib*/libnss_systemd.so.* ]; then
+    echo "gdm-install: nss-systemd package must be installed on host system."
 fi
-if [ ! -f /host/usr/lib/systemd/systemd-userdbd ]; then
+if [ ! -f $HOST/usr/lib/systemd/systemd-userdbd ]; then
     echo "gdm-install: systemd-experimental package must be installed on host system"
-    exit 1
 fi
-if [ ! -e /host/etc/nsswitch.conf ]; then
-    grep -q 'passwd.*systemd' /host/usr/etc/nsswitch.conf
+
+
+# we need accountsservice on the host for now
+if [ ! -f $HOST/usr/libexec/accounts-daemon ]; then
+	echo "gdm-install: accountsservice package must be installed on host system."
+	MISSING_PACKAGES=1
+fi
+
+if [ $MISSING_PACKAGE -ne 0 ]; then
+	echo "gdm-install: Once missing packages are available on the system, please run again gdm container install script"
+	exit 1
+fi
+
+if [ ! -e $HOST/etc/nsswitch.conf ]; then
+    grep -q 'passwd.*systemd' $HOST/usr/etc/nsswitch.conf
     RETVAL=$?
     if [ $RETVAL -ne 0 ]; then
-	cp /host/usr/etc/nsswitch.conf /host/etc/nsswitch.conf
-	cd /host/etc
-	patch -p0 -b -z .gdm-installer < /container/nsswitch.conf.patch
+	cp $HOST/usr/etc/nsswitch.conf $HOST/etc/nsswitch.conf
+	cd $HOST/etc
+	patch -p0 -b -z .gdm-installer < $ORIGIN/container/nsswitch.conf.patch
 	RETVAL=$?
 	if [ $RETVAL -ne 0 ]; then
 		echo "unable to create /etc/nsswitch.conf with nss-systemd enabled "
     		echo "gdm-install: nss-systemd is not configured in /etc/nsswitch.conf nor /usr/etc/nsswitch.conf, check man nss-systemd "
         	echo "try applying the following patch to /etc/nsswitch.conf (/usr/etc/nsswitch.conf is the umodified file) "
-		cat /container/nsswitch.conf.patch
+		cat $ORIGIN/container/nsswitch.conf.patch
 		exit 1
 	fi
 	cd -
     fi
 else
-	grep -q 'passwd.*systemd' /host/etc/nsswitch.conf
+	grep -q 'passwd.*systemd' $HOST/etc/nsswitch.conf
 	RETVAL=$?
 	if [ $RETVAL -ne 0 ]; then
 		echo "gdm-install: nss-systemd is not configured in /etc/nsswitch.conf nor /usr/etc/nsswitch.conf, check man nss-systemd "
 	        echo "try applying the following patch to /etc/nsswitch.conf (/usr/etc/nsswitch.conf is the umodified file) "
-		cat /container/nsswitch.conf.patch
+		cat $ORIGIN/container/nsswitch.conf.patch
 		exit 1
 	fi
 fi
 
 
-# we need accountsservice on the host for now
-if [ ! -f /host/usr/libexec/accounts-daemon ]; then
-	echo "gdm-install: accountsservice package must be installed on host system"
-	exit 1
-fi
 
 # copy all dbus policies if not existing on host
-for i in /etc/dbus-1/system.d/gdm.conf /usr/share/dbus-1/system.d/gdm.conf ; do
+for i in $ORIGIN/etc/dbus-1/system.d/gdm.conf $ORIGN/usr/share/dbus-1/system.d/gdm.conf ; do
 	dbus_policy=$(basename $i)
-	if [ ! -e /host/$i ] && [ ! -e /host/etc/dbus-1/system.d/$dbus_policy ] ; then
-		cp -av $i /host/etc/dbus-1/system.d/$dbus_policy
+	if [ ! -e $HOST/$i ] && [ ! -e $HOST/etc/dbus-1/system.d/$dbus_policy ] ; then
+		cp -av $i $HOST/etc/dbus-1/system.d/$dbus_policy
 	fi
 done
 
 # For podman, install a systemd unit for starting on boot and userdb entries and default config files for gdm
 if [ "${container:-}" = podman ]; then
-    if [ ! -e /host/etc/systemd/system/gdm.service ]; then
-	mkdir -p /host/etc/systemd/system/
-	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_STANDALONE_OPTIONS%,_PODMAN_RUN_GDM_STANDALONE_OPTIONS_,g" /container/systemd/gdm.service > /host/etc/systemd/system/gdm.service
+    if [ ! -e $HOST/etc/systemd/system/gdm.service ]; then
+	mkdir -p $HOST/etc/systemd/system/
+	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_STANDALONE_OPTIONS%,_PODMAN_RUN_GDM_STANDALONE_OPTIONS_,g" $ORIGIN/container/systemd/gdm.service > $HOST/etc/systemd/system/gdm.service
     fi
-    if [ ! -e /host/etc/systemd/system/gdm-systemd.service ]; then
-	mkdir -p /host/etc/systemd/system/
-	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_SYSTEMD_OPTIONS%,_PODMAN_RUN_GDM_SYSTEMD_OPTIONS_,g" /container/systemd/gdm-systemd.service > /host/etc/systemd/system/gdm-systemd.service
+    if [ ! -e $HOST/etc/systemd/system/gdm-systemd.service ]; then
+	mkdir -p $HOST/etc/systemd/system/
+	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_SYSTEMD_OPTIONS%,_PODMAN_RUN_GDM_SYSTEMD_OPTIONS_,g" $ORIGIN/container/systemd/gdm-systemd.service > $HOST/etc/systemd/system/gdm-systemd.service
     fi
-    if [ ! -e /host/etc/userdb/gdm.user ]; then
-	mkdir -p /host/etc/userdb/
-	MIN_SYSTEM_USER=$(chroot /host /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $3}' | sort -n | head -1)
-	MIN_SYSTEM_GROUP=$(chroot /host /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $4}' | sort -n | head -1)
+    if [ ! -e $HOST/etc/userdb/gdm.user ]; then
+	mkdir -p $HOST/etc/userdb/
+	MIN_SYSTEM_USER=$(chroot $HOST /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $3}' | sort -n | head -1)
+	MIN_SYSTEM_GROUP=$(chroot $HOST /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $4}' | sort -n | head -1)
 	USERID=$(expr $MIN_SYSTEM_USER - 1)
 	GROUPID=$(expr $MIN_SYSTEM_GROUP - 1)
-	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" /container/userdb/gdm.user > /host/etc/userdb/gdm.user
-	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" /container/userdb/gdm.group > /host/etc/userdb/gdm.group
-	ln -f -s gdm.user /host/etc/userdb/$USERID.user
-	ln -f -s gdm.group /host/etc/userdb/$GROUPID.group
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.user > $HOST/etc/userdb/gdm.user
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.group > $HOST/etc/userdb/gdm.group
+	ln -f -s gdm.user $HOST/etc/userdb/$USERID.user
+	ln -f -s gdm.group $HOST/etc/userdb/$GROUPID.group
     fi
 
     # ensure all directories used by gdm are created on the host
-    if [ ! -e /host/usr/lib/tmpfiles.d/gdm.conf -a ! -e /host/etc/tmpfiles.d/gdm.conf ]; then
-	cp -av /usr/lib/tmpfiles.d/gdm.conf /host/etc/tmpfiles.d/
+    if [ ! -e $HOST/usr/lib/tmpfiles.d/gdm.conf -a ! -e $HOST/etc/tmpfiles.d/gdm.conf ]; then
+	cp -av $ORIGIN/usr/lib/tmpfiles.d/gdm.conf $HOST/etc/tmpfiles.d/
     fi
 
     # yes, this is ugly but --root is bypassing userdb
-    bwrap --dev-bind / / --ro-bind /etc/passwd /host/etc/passwd --ro-bind /etc/group /host/etc/group --ro-bind /usr/share/factory /host/usr/share/factory /usr/bin/systemd-tmpfiles -E --create --root=/host  /usr/lib/tmpfiles.d/gdm.conf
+    bwrap --dev-bind / / --ro-bind $ORIGIN/etc/passwd $HOST/etc/passwd --ro-bind /etc/group $HOST/etc/group --ro-bind $ORIGIN/usr/share/factory $HOST/usr/share/factory /usr/bin/systemd-tmpfiles -E --create --root=$HOST  $ORIGIN/usr/lib/tmpfiles.d/gdm.conf
 
-    if [ ! -d /host/etc/gdm ]; then
-	mkdir -p /host/etc/gdm
-	cp -avr /etc/gdm/* /host/etc/gdm/
+    if [ ! -d $HOST/etc/gdm ]; then
+	mkdir -p $HOST/etc/gdm
+	cp -avr $ORIGIN/etc/gdm/* $HOST/etc/gdm/
     fi
-    if [ ! -e /host/etc/sysconfig/displaymanager ]; then
-	cp -avr /etc/sysconfig/displaymanager /host/etc/sysconfig/
+    if [ ! -e $HOST/etc/sysconfig/displaymanager ]; then
+	cp -avr $ORIGIN/etc/sysconfig/displaymanager $HOST/etc/sysconfig/
     fi
 fi
 
