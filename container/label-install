@@ -33,7 +33,7 @@ if [ ! -f $HOST/usr/libexec/accounts-daemon ]; then
 	MISSING_PACKAGES=1
 fi
 
-if [ $MISSING_PACKAGE -ne 0 ]; then
+if [ $MISSING_PACKAGES -ne 0 ]; then
 	echo "gdm-install: Once missing packages are available on the system, please run again gdm container install script"
 	exit 1
 fi
