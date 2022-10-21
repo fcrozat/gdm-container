@@ -22,9 +22,10 @@ LABEL com.suse.image-type="application"
 LABEL com.suse.release-stage="prototype"
 # endlabelprefix
 
-RUN zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse nss-systemd patch xterm systemd-icon-branding
+RUN zypper -n in patterns-base-basesystem openSUSE-release-appliance-docker systemd patterns-gnome-gnome_basic gtk3-branding-openSUSE  adwaita-icon-theme  desktop-data-openSUSE  gnome-session-wayland vim-small less flatpak gnome-terminal gvfs-backends noto-sans-fonts noto-coloremoji-fonts google-roboto-fonts adobe-sourcecodepro-fonts fuse nss-systemd patch xterm systemd-icon-branding skopeo tar
 
 COPY container /container
+COPY systemd-sysext /systemd-sysext
 COPY entrypoint.sh /entrypoint.sh
 # embed PODMAN_RUN_GDM_*_OPTIONS into label-install
 ARG PODMAN_RUN_GDM_COMMON_OPTIONS="--rm -d -v /dev:/dev:rslave -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -v /etc/shadow:/etc/shadow:ro -v /etc/userdb:/etc/userdb:ro -v /home:/home -v /etc/vconsole.conf:/etc/vconsole.conf:ro -v /etc/sysconfig:/etc/sysconfig:ro -v /etc/X11/xorg.conf.d:/etc/X11/xorg.conf.d:ro -v /etc/locale.conf:/etc/locale.conf:ro -v /etc/gdm:/etc/gdm:ro -v /var/cache:/var/cache -v /var/lib:/var/lib -v /:/run/host:rslave --network host --privileged --security-opt label=disable --tz=local"
@@ -55,3 +56,4 @@ LABEL INSTALL="/usr/bin/docker run --env IMAGE=IMAGE --rm --privileged -v /:/hos
 LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host IMAGE /bin/bash /container/label-uninstall"
 LABEL RUN="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_STANDALONE_OPTIONS} IMAGE /usr/bin/gdm"
 LABEL RUN-SYSTEMD="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_SYSTEMD_OPTIONS} IMAGE"
+LABEL INSTALL-SYSEXT="/usr/bin/docker run --env IMAGE=IMAGE --env TARGET=/host/var/lib/extensions/gdm --rm --privileged -v /:/host -v /var/lib/containers:/var/lib/containers IMAGE  /bin/bash /systemd-sysext/import-from-oci.sh containers-registry:IMAGE"

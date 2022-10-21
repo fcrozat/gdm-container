@@ -4,7 +4,7 @@ The purpose of this container is to deploy and start GDM in a container, indepen
 (this might be useful when using a read-only root installation, like openSUSE MicroOS).
 
 ## To deploy the container
-* on host, install the following packages: podman, accountsservice, nss-systemd, systemd-experimental
+* on host, install the following packages: podman, accountsservice, systemd-experimental (and nss-systemd is using distributions where it is not merged with systemd package)
 * ensure SELinux is configured in Permissive mode
 * run as root: podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest
 * systemctl daemon-reload
@@ -30,3 +30,30 @@ This will download gdm container from Open Build Service registry (it is a openS
 ## Security notice
 This container is NOT SECURED at all: it is running privileged and can access host system. The purpose of this container is to have another way to deploy gdm, not to try to secure it at all.
 
+
+## Experiment: systemd system extension
+
+A systemd system extension can be created on hostOS, by unpacking OCI container and some adaptation.
+
+* Pro of system extension:
+** system acts as if everything was part of hostOS
+** no issue with dbus
+** no change to hostOS, except a few config files in /etc to install
+
+Con of system extension:
+** system extension is tied to hostOS
+** everything in system extension /usr will overlay the same files from hostOS in /usr, for all applications
+** no sandboxing
+
+
+* On host, install the following packages: podman, systemdt-experimental (and nss-systemd is using distributions where it is not merged with systemd package)
+* ensure SELinux is configured in Permissive mode
+* run as root: podman container runlabel install-sysext registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest (this will fetch OCI container and convert it to a local systemd system extension=
+* systemd-sysext merge
+* systemctl daemon-reload
+* systemctl reload dbus
+* systemctl start accounts-daemon
+* systemctl start display-manager
+
+The system will act as if gdm and its dependencies were installed on the hostOS.
+Beware, those addons are not visible in hostOS rpmdb, you need to use rpm --dbpath /usr/lib/sysimage/rpm.extension-gdm/ to check the alternative rpmdb.

@@ -8,8 +8,8 @@
 cd /
 PATH="/usr/bin:/usr/sbin"
 MISSING_PACKAGES=0
-HOST=/host
-ORIGIN=
+: "${HOST:=/host}"
+: "${ORIGIN:=}"
 
 if [ ! -d $HOST/etc ] || [ ! -d $HOST/proc ] || [ ! -d $HOST/run ]; then
     echo "gdm-install: host file system is not mounted at $HOST"
@@ -28,7 +28,7 @@ fi
 
 
 # we need accountsservice on the host for now
-if [ ! -f $HOST/usr/libexec/accounts-daemon ]; then
+if [  "${container:-}" = podman -a ! -f $HOST/usr/libexec/accounts-daemon ]; then
 	echo "gdm-install: accountsservice package must be installed on host system."
 	MISSING_PACKAGES=1
 fi
@@ -67,17 +67,19 @@ else
 fi
 
 
-
+# install policies
+if [ x$INSTALL_SYSTEM_EXT = x ]; then
 # copy all dbus policies if not existing on host
-for i in $ORIGIN/etc/dbus-1/system.d/gdm.conf $ORIGN/usr/share/dbus-1/system.d/gdm.conf ; do
+  for i in $ORIGIN/etc/dbus-1/system.d/gdm.conf $ORIGIN/usr/share/dbus-1/system.d/gdm.conf ; do
 	dbus_policy=$(basename $i)
 	if [ ! -e $HOST/$i ] && [ ! -e $HOST/etc/dbus-1/system.d/$dbus_policy ] ; then
 		cp -av $i $HOST/etc/dbus-1/system.d/$dbus_policy
 	fi
-done
+  done
+fi
 
 # For podman, install a systemd unit for starting on boot and userdb entries and default config files for gdm
-if [ "${container:-}" = podman ]; then
+if [ "${container:-}" = podman -a x$INSTALL_SYSTEM_EXT = x ]; then
     if [ ! -e $HOST/etc/systemd/system/gdm.service ]; then
 	mkdir -p $HOST/etc/systemd/system/
 	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_STANDALONE_OPTIONS%,_PODMAN_RUN_GDM_STANDALONE_OPTIONS_,g" $ORIGIN/container/systemd/gdm.service > $HOST/etc/systemd/system/gdm.service
@@ -86,16 +88,27 @@ if [ "${container:-}" = podman ]; then
 	mkdir -p $HOST/etc/systemd/system/
 	sed -e "s,%IMAGE%,${IMAGE},g;s,%PODMAN_RUN_GDM_SYSTEMD_OPTIONS%,_PODMAN_RUN_GDM_SYSTEMD_OPTIONS_,g" $ORIGIN/container/systemd/gdm-systemd.service > $HOST/etc/systemd/system/gdm-systemd.service
     fi
-    if [ ! -e $HOST/etc/userdb/gdm.user ]; then
-	mkdir -p $HOST/etc/userdb/
+fi
+
+    if [ x$INSTALL_SYSTEM_EXT = x ]; then
+	USERDB_PREFIX=$HOST/etc
+    else
+	USERDB_PREFIX=$ORIGIN/usr/lib
+    fi
+    if [ ! -e ${USERDB_PREFIX}/userdb/gdm.user ]; then
+	mkdir -p ${USERDB_PREFIX}/userdb/
 	MIN_SYSTEM_USER=$(chroot $HOST /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $3}' | sort -n | head -1)
 	MIN_SYSTEM_GROUP=$(chroot $HOST /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $4}' | sort -n | head -1)
 	USERID=$(expr $MIN_SYSTEM_USER - 1)
 	GROUPID=$(expr $MIN_SYSTEM_GROUP - 1)
-	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.user > $HOST/etc/userdb/gdm.user
-	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.group > $HOST/etc/userdb/gdm.group
-	ln -f -s gdm.user $HOST/etc/userdb/$USERID.user
-	ln -f -s gdm.group $HOST/etc/userdb/$GROUPID.group
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.user > ${USERDB_PREFIX}/userdb/gdm.user
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.group > ${USERDB_PREFIX}/userdb/gdm.group
+	ln -f -s gdm.user ${USERDB_PREFIX}/userdb/$USERID.user
+	ln -f -s gdm.group ${USERDB_PREFIX}/userdb/$GROUPID.group
+        if [ x$INSTALL_SYSTEM_EXT = x1 ]; then
+		mkdir -p $HOST/etc/userdb/
+	        cp -ar ${USERDB_PREFIX}/userdb/* $HOST/etc/userdb/
+	fi
     fi
 
     # ensure all directories used by gdm are created on the host
@@ -103,8 +116,11 @@ if [ "${container:-}" = podman ]; then
 	cp -av $ORIGIN/usr/lib/tmpfiles.d/gdm.conf $HOST/etc/tmpfiles.d/
     fi
 
+
     # yes, this is ugly but --root is bypassing userdb
+if [ "${container:-}" = podman ]; then
     bwrap --dev-bind / / --ro-bind $ORIGIN/etc/passwd $HOST/etc/passwd --ro-bind /etc/group $HOST/etc/group --ro-bind $ORIGIN/usr/share/factory $HOST/usr/share/factory /usr/bin/systemd-tmpfiles -E --create --root=$HOST  $ORIGIN/usr/lib/tmpfiles.d/gdm.conf
+fi
 
     if [ ! -d $HOST/etc/gdm ]; then
 	mkdir -p $HOST/etc/gdm
@@ -113,5 +129,4 @@ if [ "${container:-}" = podman ]; then
     if [ ! -e $HOST/etc/sysconfig/displaymanager ]; then
 	cp -avr $ORIGIN/etc/sysconfig/displaymanager $HOST/etc/sysconfig/
     fi
-fi
 
