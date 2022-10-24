@@ -1,10 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 : "${TARGET:=/var/lib/extensions/gdm}"
 ORIGIN=/var/tmp/gdm-layers
 
 if [ ${IMAGE}x != x ]; then
-	CONTAINER=containers-storage:${IMAGE}
+	SERVER=${IMAGE%%/*}
+	if [ ${SERVER} = localhost -o ${SERVER} = ${IMAGE} ]; then
+		CONTAINER=containers-storage:${IMAGE}
+	else
+		CONTAINER=docker://${IMAGE}
+	fi
 else
 	CONTAINER=${1:-docker://registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest}
 fi
@@ -52,7 +57,7 @@ echo "SYSEXT_LEVEL=1" >> $TARGET/usr/lib/extension-release.d/extension-release.g
 mkdir -p $TARGET/usr/etc/xdg/autostart
 mv $TARGET/etc/xdg/autostart/* $TARGET/usr/etc/xdg/autostart/
 
-ORIGIN=$TARGET INSTALL_SYSTEM_EXT=1 sh -x $TARGET/container/label-install
+ORIGIN=$TARGET INSTALL_SYSTEM_EXT=1 sh $TARGET/container/label-install
 
 # workaround for update-alternative not being present
 [ ! -d /etc/alternatives ] && mkdir -p /etc/alternatives

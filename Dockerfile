@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Defines the tag for OBS and build script builds:
-#!BuildTag: suse/alp/workloads/gdm:0.1
-#!BuildTag: suse/alp/workloads/gdm:0.1-%RELEASE%
+#!BuildTag: suse/alp/workloads/gdm:0.2
+#!BuildTag: suse/alp/workloads/gdm:0.2-%RELEASE%
 #!BuildTag: suse/alp/workloads/gdm:latest
 
 FROM opensuse/tumbleweed
@@ -12,7 +12,7 @@ LABEL maintainer="Frederic Crozat <fcrozat@suse.com>"
 # labelprefix=com.suse.alp.workloads.gdm
 LABEL org.opencontainers.image.title="GDM Desktop Container Image"
 LABEL org.opencontainers.image.description="GDM container based on Tumbleweed"
-LABEL org.opencontainers.image.version="0.1"
+LABEL org.opencontainers.image.version="0.2"
 LABEL org.opencontainers.image.url="https://github.com/fcrozat/gdm-container/"
 LABEL org.opencontainers.image.created="%BUILDTIME%"
 LABEL org.opensuse.reference="registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:0.1-%RELEASE%"
@@ -56,4 +56,4 @@ LABEL INSTALL="/usr/bin/docker run --env IMAGE=IMAGE --rm --privileged -v /:/hos
 LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host IMAGE /bin/bash /container/label-uninstall"
 LABEL RUN="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_STANDALONE_OPTIONS} IMAGE /usr/bin/gdm"
 LABEL RUN-SYSTEMD="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_SYSTEMD_OPTIONS} IMAGE"
-LABEL INSTALL-SYSEXT="/usr/bin/docker run --env IMAGE=IMAGE --env TARGET=/host/var/lib/extensions/gdm --rm --privileged -v /:/host -v /var/lib/containers:/var/lib/containers IMAGE  /bin/bash /systemd-sysext/import-from-oci.sh containers-registry:IMAGE"
+LABEL INSTALL-SYSEXT="/usr/bin/docker run --env IMAGE=IMAGE --env TARGET=/host/var/lib/extensions/gdm --rm --privileged -v /:/host -v /var/lib/containers:/var/lib/containers IMAGE  /bin/bash /systemd-sysext/import-from-oci.sh"
