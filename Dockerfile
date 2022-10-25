@@ -57,3 +57,4 @@ LABEL UNINSTALL="/usr/bin/docker run --rm --privileged -v /:/host IMAGE /bin/bas
 LABEL RUN="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_STANDALONE_OPTIONS} IMAGE /usr/bin/gdm"
 LABEL RUN-SYSTEMD="/usr/bin/docker run --replace --name NAME ${PODMAN_RUN_GDM_SYSTEMD_OPTIONS} IMAGE"
 LABEL INSTALL-SYSEXT="/usr/bin/docker run --env IMAGE=IMAGE --env TARGET=/host/var/lib/extensions/gdm --rm --privileged -v /:/host -v /var/lib/containers:/var/lib/containers IMAGE  /bin/bash /systemd-sysext/import-from-oci.sh"
+LABEL INSTALL-PORTABLE="/usr/bin/docker run --env IMAGE=IMAGE --env TARGET=/host/var/lib/portables/gdm --env PORTABLE=1 --rm --privileged -v /:/host -v /var/lib/containers:/var/lib/containers IMAGE  /bin/bash /systemd-sysext/import-from-oci.sh"

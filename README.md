@@ -46,7 +46,7 @@ Con of system extension:
 ** no sandboxing
 
 
-* On host, install the following packages: podman, systemdt-experimental (and nss-systemd is using distributions where it is not merged with systemd package)
+* On host, install the following packages: podman, systemd-experimental (and nss-systemd is using distributions where it is not merged with systemd package)
 * ensure SELinux is configured in Permissive mode
 * run as root: podman container runlabel install-sysext registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest (this will fetch OCI container and convert it to a local systemd system extension=
 * systemd-sysext merge
@@ -57,3 +57,27 @@ Con of system extension:
 
 The system will act as if gdm and its dependencies were installed on the hostOS.
 Beware, those addons are not visible in hostOS rpmdb, you need to use rpm --dbpath /usr/lib/sysimage/rpm.extension-gdm/ to check the alternative rpmdb.
+
+## Experiment: systemd portable service
+
+A systemd portable extension can be created on hostOS, by unpacking OCI container and some adaptation.
+
+* Pro of portable service:
+** system acts as if everything was part of hostOS
+** no issue with dbus
+** no change to hostOS, except a few config files in /etc to install
+** portable extension is independant of the hostOS
+** only service exported by portable service is visible on hostOS, nothing else
+
+Con of portable service:
+** very light sandboxing, need to punch holes to get access to files
+
+
+
+* On host, install the following packages: podman, systemd-experimental, systemd-portable (and nss-systemd is using distributions where it is not merged with systemd package)
+* ensure SELinux is configured in Permissive mode
+* run as root: podman container runlabel install-portable registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest (this will fetch OCI container and convert it to a local systemd portable service
+* portablectl attach --profile gdm gdm
+* systemctl reload dbus
+* systemctl start gdm-accounts-daemon
+* systemctl start gdm-display-manager
