@@ -69,8 +69,8 @@ ORIGIN=$TARGET INSTALL_SYSTEM_EXT=1 sh $TARGET/container/label-install
 
 if [ ${PORTABLE}x = x ]; then
 	# workaround for update-alternative not being present
-	[ ! -d /etc/alternatives ] && mkdir -p /etc/alternatives
-	cp -a $TARGET/etc/alternatives/* /etc/alternatives
+	[ ! -d /host/etc/alternatives ] && mkdir -p /host/etc/alternatives
+	cp -a $TARGET/etc/alternatives/* /host/etc/alternatives
 	# move away rpmdb, it will hide HostOS one
 	mv $TARGET/usr/lib/sysimage/rpm $TARGET/usr/lib/sysimage/rpm.extension-gdm
 
