@@ -28,9 +28,11 @@ fi
 
 
 # we need accountsservice on the host for now
-if [  "${container:-}" = podman -a ! -f $HOST/usr/libexec/accounts-daemon ]; then
+if [ x$INSTALL_SYSTEM_EXT = x ]; then
+ if [ "${container:-}" = podman -a ! -f $HOST/usr/libexec/accounts-daemon ]; then
 	echo "gdm-install: accountsservice package must be installed on host system."
 	MISSING_PACKAGES=1
+ fi
 fi
 
 if [ $MISSING_PACKAGES -ne 0 ]; then
