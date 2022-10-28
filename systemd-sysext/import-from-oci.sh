@@ -73,6 +73,7 @@ if [ ${PORTABLE}x = x ]; then
 	cp -a $TARGET/etc/alternatives/* /host/etc/alternatives
 	# move away rpmdb, it will hide HostOS one
 	mv $TARGET/usr/lib/sysimage/rpm $TARGET/usr/lib/sysimage/rpm.extension-gdm
+	cp -ra $TARGET/etc/fonts /host/etc/
 
 if [ "${container:-}" = podman ]; then
 	echo please run the following commands on host:
