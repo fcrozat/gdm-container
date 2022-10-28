@@ -62,8 +62,8 @@ else
 fi
 echo "SYSEXT_LEVEL=1" >> $TARGET/usr/lib/extension-release.d/extension-release.gdm
 fi
-mkdir -p $TARGET/usr/etc/xdg/autostart
-mv $TARGET/etc/xdg/autostart/* $TARGET/usr/etc/xdg/autostart/
+mkdir -p $TARGET/usr/etc/xdg
+cp -ra $TARGET/etc/xdg/ $TARGET/usr/etc/
 
 ORIGIN=$TARGET INSTALL_SYSTEM_EXT=1 sh $TARGET/container/label-install
 
