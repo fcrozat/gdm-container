@@ -11,11 +11,11 @@ Restart=on-failure
 TimeoutStopSec=70
 ExecStartPre=-/bin/rm -f %t/%n.ctr-id
 ExecStartPre=-/usr/bin/podman pull %IMAGE%
-ExecStart=/usr/bin/podman container run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --sdnotify=conmon --replace %PODMAN_RUN_GDM_SYSTEMD_OPTIONS%  --name gdm %IMAGE%
+ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --replace --name gdm %PODMAN_RUN_GDM_SYSTEMD_OPTIONS% %IMAGE%
 ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
 Type=notify
 NotifyAccess=all
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical.target

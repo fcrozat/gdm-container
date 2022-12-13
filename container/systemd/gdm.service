@@ -4,23 +4,25 @@ Documentation=https://github.com/fcrozat/gdm-container
 Wants=network-online.target
 After=network-online.target
 After=dbus.service
+RequiresMountsFor=%t/containers
 
 [Service]
-Environment=PODMAN_SYSTEMD_UNIT=%n-%i
+Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart=on-failure
-RestartSec=1s
 TimeoutStopSec=70
-ExecStartPre=/bin/rm -f %t/%n.pid %t/%n.ctr-id
+ExecStartPre=/bin/rm -f %t/%n.ctr-id
 ExecStartPre=-/usr/bin/podman pull %IMAGE%
-ExecStart=/usr/bin/podman container run --cidfile %t/%n.ctr-id --cgroups=no-conmon --sdnotify=conmon --replace %PODMAN_RUN_GDM_STANDALONE_OPTIONS%  --name gdm %IMAGE%
-ExecStop=/usr/bin/podman stop --ignore --cidfile %t/%n.ctr-id -t 10
-ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/%n.ctr-id
+ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --replace --name gdm %PODMAN_RUN_GDM_STANDALONE_OPTIONS% %IMAGE%
+ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
+ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
 PIDFile=/run/gdm/gdm.pid
 KillMode=mixed
 IgnoreSIGPIPE=no
 BusName=org.gnome.DisplayManager
 ExecReload=/bin/kill -SIGHUP $MAINPID
 KeyringMode=shared
+Type=notify
+NotifyAccess=all
 
 [Install]
-WantedBy=multi-user.target default.target
+WantedBy=graphical.target
