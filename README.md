@@ -8,8 +8,9 @@ The purpose of this container is to deploy and start GDM in a container, indepen
 * ensure SELinux is configured in Permissive mode (edit `/etc/selinux/config` and reboot)
 * run as root: 
     * `podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest`
-    * `systemctl daemon-reload systemctl reload dbus`
-    * `systemctl restart accounts-daemon`(ensure it uses nss-systemd)
+    * `systemctl daemon-reload`
+    * `systemctl reload dbus`
+    * `systemctl restart accounts-daemon` (ensure it uses nss-systemd)
 
 
 This will download gdm container from Open Build Service registry (it is a openSUSE Tumbleweed container with bare minimum to start GNOME), recreate a container locally and deploy a systemd service which is replacing display-manager.service systemd service (used on openSUSE / SLE).
