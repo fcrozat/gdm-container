@@ -12,6 +12,7 @@ The purpose of this container is to deploy and start GDM in a container, indepen
 * AppArmor should be disabled (due to https://bugzilla.opensuse.org/show_bug.cgi?id=1207698 )
 * run as root: 
     * `podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest`
+    * `systemctl reload nscd` if nscd was running
     * `systemctl daemon-reload`
     * `systemctl reload dbus`
     * `systemctl restart accounts-daemon` (ensure it uses nss-systemd)
