@@ -5,11 +5,15 @@ The purpose of this container is to deploy and start GDM in a container, indepen
 
 ## To deploy the container
 * on host, install the following packages: `podman accountsservice systemd-experimental`
-* ensure SELinux is configured in Permissive mode (edit `/etc/selinux/config` and reboot)
+* ensure SELinux is configured in Permissive mode:
+    * Edit `/etc/selinux/config`
+    * Make sure there is a line with `SELINUX=permissive` in it
+    * reboot
 * run as root: 
     * `podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest`
-    * `systemctl daemon-reload systemctl reload dbus`
-    * `systemctl restart accounts-daemon`(ensure it uses nss-systemd)
+    * `systemctl daemon-reload`
+    * `systemctl reload dbus`
+    * `systemctl restart accounts-daemon` (ensure it uses nss-systemd)
 
 
 This will download gdm container from Open Build Service registry (it is a openSUSE Tumbleweed container with bare minimum to start GNOME), recreate a container locally and deploy a systemd service which is replacing display-manager.service systemd service (used on openSUSE / SLE).
@@ -49,7 +53,10 @@ A systemd system extension can be created on hostOS, by unpacking OCI container 
 
 
 * On host, install the following packages: `podman systemd-experimental`
-* ensure SELinux is configured in Permissive mode
+* ensure SELinux is configured in Permissive mode:
+    * Edit `/etc/selinux/config`
+    * Make sure there is a line with `SELINUX=permissive` in it
+    * reboot
 * run as root: 
     * `podman container runlabel install-sysext registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest` (this will fetch OCI container and convert it to a local systemd system extension)
     * `systemd-sysext merge`
@@ -78,7 +85,10 @@ Con of portable service:
 
 
 * On host, install the following packages: `podman systemd-experimental systemd-portable`
-* ensure SELinux is configured in Permissive mode
+* ensure SELinux is configured in Permissive mode:
+    * Edit `/etc/selinux/config`
+    * Make sure there is a line with `SELINUX=permissive` in it
+    * reboot
 * run as root: 
     * `podman container runlabel install-portable registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest` (this will fetch OCI container and convert it to a local systemd portable service
     * `portablectl attach --profile gdm gdm`
