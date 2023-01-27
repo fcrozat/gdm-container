@@ -99,10 +99,27 @@ fi
     fi
     if [ ! -e ${USERDB_PREFIX}/userdb/gdm.user ]; then
 	mkdir -p ${USERDB_PREFIX}/userdb/
-	MIN_SYSTEM_USER=$(chroot $HOST /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $3}' | sort -n | head -1)
-	MIN_SYSTEM_GROUP=$(chroot $HOST /usr/bin/userdbctl | grep system | grep -wve "[↓|↑]" | awk '{print $4}' | sort -n | head -1)
-	USERID=$(expr $MIN_SYSTEM_USER - 1)
-	GROUPID=$(expr $MIN_SYSTEM_GROUP - 1)
+
+	read -a system_uids <<< "$(chroot $HOST userdbctl user --no-legend | tac | awk '$2 ~ /system/ { printf "%s ", $3 }')"
+	uids=${#system_uids[@]}
+	for (( i=0; i<${uids}; i++ ));
+	do
+		USERID=$(expr ${system_uids[$i]} - 1 )
+		if [[ $USERID >  ${system_uids[$(expr i+1)]} ]]; then
+			break
+		fi
+	done
+
+	read -a system_gids <<< "$(chroot $HOST userdbctl user --no-legend | tac | awk '$2 ~ /system/ { printf "%s ", $4 }')"
+	gids=${#system_gids[@]}
+	for (( i=0; i<${gids}; i++ ));
+	do
+		GROUPID=$(expr ${system_gids[$i]} - 1 )
+		if [[ $GROUPID >  ${system_gids[$(expr i+1)]} ]]; then
+			break
+		fi
+	done
+
 	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.user > ${USERDB_PREFIX}/userdb/gdm.user
 	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.group > ${USERDB_PREFIX}/userdb/gdm.group
 	ln -f -s gdm.user ${USERDB_PREFIX}/userdb/$USERID.user
