@@ -120,8 +120,8 @@ fi
 		fi
 	done
 
-	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.user > ${USERDB_PREFIX}/userdb/gdm.user
-	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$USERID,g" $ORIGIN/container/userdb/gdm.group > ${USERDB_PREFIX}/userdb/gdm.group
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$GROUPID,g" $ORIGIN/container/userdb/gdm.user > ${USERDB_PREFIX}/userdb/gdm.user
+	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$GROUPID,g" $ORIGIN/container/userdb/gdm.group > ${USERDB_PREFIX}/userdb/gdm.group
 	ln -f -s gdm.user ${USERDB_PREFIX}/userdb/$USERID.user
 	ln -f -s gdm.group ${USERDB_PREFIX}/userdb/$GROUPID.group
         if [ x$INSTALL_SYSTEM_EXT = x1 ]; then
