@@ -10,7 +10,6 @@ Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart=on-failure
 TimeoutStopSec=70
 ExecStartPre=-/bin/rm -f %t/%n.ctr-id
-ExecStartPre=-/usr/bin/podman pull %IMAGE%
 ExecStart=/usr/bin/podman run --cidfile=%t/%n.ctr-id --cgroups=no-conmon --rm --sdnotify=conmon --replace --name gdm %PODMAN_RUN_GDM_SYSTEMD_OPTIONS% %IMAGE%
 ExecStop=/usr/bin/podman stop --ignore --cidfile=%t/%n.ctr-id
 ExecStopPost=/usr/bin/podman rm -f --ignore --cidfile=%t/%n.ctr-id
