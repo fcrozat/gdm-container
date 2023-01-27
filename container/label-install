@@ -110,7 +110,7 @@ fi
 		fi
 	done
 
-	read -a system_gids <<< "$(chroot $HOST userdbctl user --no-legend | tac | awk '$2 ~ /system/ { printf "%s ", $4 }')"
+	read -a system_gids <<< "$(chroot $HOST userdbctl group --no-legend | tac | awk '$2 ~ /system/ { printf "%s ", $3 }')"
 	gids=${#system_gids[@]}
 	for (( i=0; i<${gids}; i++ ));
 	do
