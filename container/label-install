@@ -72,7 +72,7 @@ fi
 # install policies
 if [ x$INSTALL_SYSTEM_EXT = x ]; then
 # copy all dbus policies if not existing on host
-  for i in $ORIGIN/etc/dbus-1/system.d/gdm.conf $ORIGIN/usr/share/dbus-1/system.d/gdm.conf ; do
+  for i in $ORIGIN/usr/share/dbus-1/system.d/gdm.conf ; do
 	dbus_policy=$(basename $i)
 	if [ ! -e $HOST/$i ] && [ ! -e $HOST/etc/dbus-1/system.d/$dbus_policy ] ; then
 		cp -av $i $HOST/etc/dbus-1/system.d/$dbus_policy
