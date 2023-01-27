@@ -14,7 +14,12 @@ if [ ! -d /host/etc ] || [ ! -d /host/proc ] || [ ! -d /host/run ]; then
 fi
 
 # removing installed files
-systemd-tmpfiles --root=/host --remove /etc/tmpfiles.d/gdm.conf || true
+if [ "${container:-}" = podman ]; then
+  chroot /host /usr/bin/systemd-tmpfiles --remove /etc/tmpfiles.d/gdm.conf
+else
+  systemd-tmpfiles --root=/host --remove /etc/tmpfiles.d/gdm.conf || true
+fi
+
 USERID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 3)
 GROUPID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 4)
 rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/{gdm,gdm-systemd}.service,/etc/gdm,etc/dbus-1/system.d/gdm.conf} /host/etc/userdb/{gdm.group,gdm.user,$USERID.user,$GROUPID.group} /host/etc/tmpfiles.d/gdm.conf
