@@ -137,9 +137,6 @@ fi
     fi
 
 
-    if [ "${container:-}" = podman ]; then
-	chroot /host /usr/bin/systemd-tmpfiles -E --create /etc/tmpfiles.d/gdm.conf
-    fi
 
     if [ ! -d $HOST/etc/gdm ]; then
 	mkdir -p $HOST/etc/gdm
