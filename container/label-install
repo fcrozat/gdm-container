@@ -122,11 +122,12 @@ fi
 
 	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$GROUPID,g" $ORIGIN/container/userdb/gdm.user > ${USERDB_PREFIX}/userdb/gdm.user
 	sed -e "s,%USERID%,$USERID,g;s,%GROUPID%,$GROUPID,g" $ORIGIN/container/userdb/gdm.group > ${USERDB_PREFIX}/userdb/gdm.group
-	ln -f -s gdm.user ${USERDB_PREFIX}/userdb/$USERID.user
-	ln -f -s gdm.group ${USERDB_PREFIX}/userdb/$GROUPID.group
         if [ x$INSTALL_SYSTEM_EXT = x1 ]; then
 		mkdir -p $HOST/etc/userdb/
 	        cp -ar ${USERDB_PREFIX}/userdb/* $HOST/etc/userdb/
+	else
+		ln -f -s gdm.user ${USERDB_PREFIX}/userdb/$USERID.user
+		ln -f -s gdm.group ${USERDB_PREFIX}/userdb/$GROUPID.group
 	fi
     fi
 
@@ -148,3 +149,16 @@ fi
 	cp -avr $ORIGIN/etc/sysconfig/displaymanager $HOST/etc/sysconfig/
     fi
 
+if [ "${container:-}" = podman -a -e /run/dbus/system_bus_socket ]; then
+	systemctl --quiet reload nscd
+	chroot /host /usr/bin/systemd-tmpfiles -E --create /etc/tmpfiles.d/gdm.conf
+	systemctl daemon-reload
+	systemctl reload dbus
+	systemctl restart accounts-daemon
+fi
+
+if [ ${INSTALL_SYSTEM_EXT}x = x ]; then
+	echo gdm container installed, to start it:
+	echo for running it in a container without systemd: systemdctl start gdm
+	echo for running it in a container with systemd: systemdctl start gdm-systemd
+fi

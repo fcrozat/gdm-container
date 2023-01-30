@@ -15,11 +15,7 @@ else
 fi
 
 
-if [ "${container:-}" = podman ]; then
-	echo ""
-else
-	systemd-sysext unmerge
-fi
+systemd-sysext unmerge
 
 if [ ! -f /usr/bin/skopeo ]; then
     echo "skopeo package must be installed on host system"
@@ -27,6 +23,11 @@ if [ ! -f /usr/bin/skopeo ]; then
 fi
 if [ ! -f /usr/bin/patch ]; then
     echo "patch package must be installed on host system"
+    exit 1
+fi
+
+if [ ${PORTABLE}x != x -a ! -f /host/usr/bin/portablectl ]; then
+    echo "systemd-portable package must be installed on host system"
     exit 1
 fi
 
@@ -75,12 +76,14 @@ if [ ${PORTABLE}x = x ]; then
 	mv $TARGET/usr/lib/sysimage/rpm $TARGET/usr/lib/sysimage/rpm.extension-gdm
 	cp -ra $TARGET/etc/fonts /host/etc/
 
-if [ "${container:-}" = podman ]; then
-	echo please run the following commands on host:
-	echo systemd-sysext merge
-	echo systemctl daemon-reload
-	echo systemctl reload dbus
-	echo systemctl start accounts-daemon
+if [ "${container:-}" = podman -a -e /run/dbus/system_bus_socket ]; then
+	systemctl enable systemd-sysext
+	systemctl restart systemd-sysext
+	systemctl daemon-reload
+	systemctl reload dbus
+	systemctl start accounts-daemon
+
+	echo gdm system extension installed, to start gdm, run the following command on host:
 	echo systemctl start display-manager
 
 else
@@ -97,9 +100,9 @@ else
 	ln -s accounts-daemon.service $TARGET/usr/lib/systemd/system/gdm-accounts-daemon.service
 	ln -s display-manager.service $TARGET/usr/lib/systemd/system/gdm-display-manager.service
 
+	portablectl attach --profile gdm gdm
+	systemctl stop accounts-daemon
 	echo please run the followin commands on host:
-	echo portablectl attach --profile gdm gdm
-	echo systemctl reload dbus
 	echo systemctl start gdm-accounts-daemon
 	echo systemctl start gdm-display-manager
 
