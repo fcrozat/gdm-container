@@ -33,15 +33,18 @@ ARG PODMAN_RUN_GDM_STANDALONE_OPTIONS="$PODMAN_RUN_GDM_COMMON_OPTIONS -v /run:/r
 ARG PODMAN_RUN_GDM_SYSTEMD_OPTIONS="$PODMAN_RUN_GDM_COMMON_OPTIONS --systemd=always --entrypoint /usr/lib/systemd/systemd"
 RUN chmod 755 /entrypoint.sh &&  sed -i -e "s@_PODMAN_RUN_GDM_STANDALONE_OPTIONS_@${PODMAN_RUN_GDM_STANDALONE_OPTIONS}@g;s@_PODMAN_RUN_GDM_SYSTEMD_OPTIONS_@${PODMAN_RUN_GDM_SYSTEMD_OPTIONS}@g"   /container/label-install
 
-RUN mkdir -p /etc/userdb && cp -avr /container/userdb/* /etc/userdb && cp /usr/etc/nsswitch.conf /etc/nsswitch.conf && cd /etc && patch -p0 -i /container/nsswitch.conf.patch
+RUN mkdir -p /etc/userdb && cp -avr /container/userdb/* /etc/userdb && cp /usr/etc/nsswitch.conf /etc/nsswitch.conf && cd /etc && patch -p0 -i /container/nsswitch-systemd-first.conf.patch
+
 
 
 # setup the system
 RUN systemd-sysusers && systemd-tmpfiles --create
 
+RUN container/passwd-to-userdb && rm /etc/passwd
+
 # cleanup systemd setup
-RUN rm -f /etc/systemd/system/getty.target.wants/getty@tty1.service
-# gnome-menus-branding-openSUSE
+RUN ln -f -s /dev/null /etc/systemd/system/getty@tty1.service
+
 #RUN flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 #RUN flatpak install --noninteractive org.gnome.Nautilus
 # avoid this script, best to run gdm directly

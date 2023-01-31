@@ -1,0 +1,17 @@
+#!/bin/bash
+
+mkdir -p /usr/lib/userdb
+while IFS= read -r line; do 
+ IFS=":"
+ read -a passwd <<< "$line"
+ echo { \"userName\" : \"${passwd[0]}\", \"disposition\" : \"system\", \"uid\" : ${passwd[2]}, \"gid\" :  \"${passwd[3]}\", \"realName\" :  \"${passwd[4]}\", \"homeDirectory\" : \"${passwd[5]}\", \"shell\" : \"${passwd[6]}\" } > "/usr/lib/userdb/${passwd[0]}.user"
+ ln -s "${passwd[0]}.user" "/usr/lib/userdb/${passwd[2]}.user"
+done < /etc/passwd
+
+
+while IFS= read -r line; do 
+ IFS=":"
+ read -a group <<< "$line"
+ echo { \"groupName\" : \"${group[0]}\", \"gid\" : \"${group[2]}\", \"members\" :  \"${group[3]}\" } > "/usr/lib/userdb/${group[0]}.group"
+ ln -s "${group[0]}.group" "/usr/lib/userdb/${group[2]}.group"
+done < /etc/group
