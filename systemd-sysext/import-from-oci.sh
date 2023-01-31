@@ -54,6 +54,9 @@ do
   i=$(($i+1))
 done
 
+# kill userdb from container, not used for system extensions nor portable service
+rm -f $TARGET/usr/lib/userdb/*.{user,group}
+
 if [ ${PORTABLE}x = x ]; then
   mkdir -p $TARGET/usr/lib/extension-release.d
   # ugly tricky, we mimic the host
