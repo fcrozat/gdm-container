@@ -53,15 +53,16 @@ do
   tar xf $ORIGIN/$(skopeo inspect dir:/$ORIGIN --format "{{ index .Layers $i }}" | sed -e 's/sha256://g')
   i=$(($i+1))
 done
+
 if [ ${PORTABLE}x = x ]; then
-mkdir -p $TARGET/usr/lib/extension-release.d
-# ugly tricky, we mimic the host
-if [ "${container:-}" = podman ]; then
+  mkdir -p $TARGET/usr/lib/extension-release.d
+  # ugly tricky, we mimic the host
+  if [ "${container:-}" = podman ]; then
 	grep -E '^ID=|^VERSION_ID=' /host/etc/os-release > $TARGET/usr/lib/extension-release.d/extension-release.gdm
-else
+  else
 	grep -E '^ID=|^VERSION_ID=' /etc/os-release > $TARGET/usr/lib/extension-release.d/extension-release.gdm
-fi
-echo "SYSEXT_LEVEL=1" >> $TARGET/usr/lib/extension-release.d/extension-release.gdm
+  fi
+  echo "SYSEXT_LEVEL=1" >> $TARGET/usr/lib/extension-release.d/extension-release.gdm
 fi
 mkdir -p $TARGET/usr/etc/xdg
 cp -ra $TARGET/etc/xdg/ $TARGET/usr/etc/
