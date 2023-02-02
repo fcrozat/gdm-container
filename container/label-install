@@ -156,6 +156,6 @@ fi
 
 if [ ${INSTALL_SYSTEM_EXT}x = x ]; then
 	echo gdm container installed, to start it:
-	echo for running it in a container without systemd: systemdctl start gdm
-	echo for running it in a container with systemd: systemdctl start gdm-systemd
+	echo for running it in a container without systemd: systemctl start gdm
+	echo for running it in a container with systemd: systemctl start gdm-systemd
 fi
