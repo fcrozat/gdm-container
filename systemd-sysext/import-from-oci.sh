@@ -106,7 +106,7 @@ else
 
 	portablectl attach --profile gdm gdm
 	systemctl stop accounts-daemon
-	echo please run the followin commands on host:
+	echo please run the following commands on host:
 	echo systemctl start gdm-accounts-daemon
 	echo systemctl start gdm-display-manager
 
