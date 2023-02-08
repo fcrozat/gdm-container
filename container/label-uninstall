@@ -30,7 +30,7 @@ rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/{gdm,gdm-systemd}.
 if [ "${container:-}" = podman -a -e /run/dbus/system_bus_socket ]; then
 	chroot /host /usr/bin/systemd-sysext unmerge 2>/dev/null
 	chroot /host /usr/bin/portablectl detach gdm 2>/dev/null
-	systemctl --quiet reload nscd
+	systemctl --quiet try-reload-or-restart nscd
 	systemctl daemon-reload
 	systemctl reload dbus
 	systemctl restart accounts-daemon

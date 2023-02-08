@@ -153,7 +153,7 @@ fi
     fi
 
 if [ "${container:-}" = podman -a -e /run/dbus/system_bus_socket ]; then
-	systemctl --quiet reload nscd
+	systemctl --quiet try-reload-or-restart nscd
 	chroot /host /usr/bin/systemd-tmpfiles -E --create /etc/tmpfiles.d/gdm.conf
 	systemctl daemon-reload
 	systemctl reload dbus
