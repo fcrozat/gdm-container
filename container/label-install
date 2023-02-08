@@ -26,7 +26,7 @@ if [ ! -f $HOST/usr/lib/systemd/systemd-userdbd ]; then
     echo "gdm-install: systemd-experimental package must be installed on host system"
 fi
 
-if [ grep -e "enforcing=1" /proc/cmdline ]; then
+if grep -e "enforcing=1" /proc/cmdline; then
     echo "In /etc/default/grub, please remove the option 'enforcing=1' from GRUB_CMDLINE_LINUX_DEFAULT"
     echo "Then run"
     echo "  transactional-update grub.cfg"
