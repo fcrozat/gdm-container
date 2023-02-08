@@ -9,7 +9,6 @@ The purpose of this container is to deploy and start GDM in a container, indepen
     * Edit `/etc/selinux/config`
     * Make sure there is a line with `SELINUX=permissive` in it
     * reboot
-* AppArmor should be disabled (due to https://bugzilla.opensuse.org/show_bug.cgi?id=1207698 )
 * run as root: 
     * `podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/gdm:latest`
 
