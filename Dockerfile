@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Defines the tag for OBS and build script builds:
-#!BuildTag: suse/alp/workloads/gdm:0.2
-#!BuildTag: suse/alp/workloads/gdm:0.2-%RELEASE%
+#!BuildTag: suse/alp/workloads/gdm:0.3
+#!BuildTag: suse/alp/workloads/gdm:0.3-%RELEASE%
 #!BuildTag: suse/alp/workloads/gdm:latest
 
 FROM opensuse/tumbleweed
