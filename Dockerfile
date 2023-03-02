@@ -40,7 +40,7 @@ RUN mkdir -p /etc/userdb && cp -avr /container/userdb/* /etc/userdb && cp /usr/e
 # setup the system
 RUN systemd-sysusers && systemd-tmpfiles --create
 
-RUN container/passwd-to-userdb && rm /etc/passwd
+RUN container/convert-passwd-group-to-userdb && rm /etc/passwd && rm /etc/group
 
 # cleanup systemd setup
 RUN ln -f -s /dev/null /etc/systemd/system/console-getty.service
