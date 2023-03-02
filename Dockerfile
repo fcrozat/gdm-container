@@ -43,7 +43,7 @@ RUN systemd-sysusers && systemd-tmpfiles --create
 RUN container/passwd-to-userdb && rm /etc/passwd
 
 # cleanup systemd setup
-RUN ln -f -s /dev/null /etc/systemd/system/getty@tty1.service
+RUN ln -f -s /dev/null /etc/systemd/system/console-getty.service
 
 #RUN flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 #RUN flatpak install --noninteractive org.gnome.Nautilus
