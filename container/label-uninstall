@@ -17,23 +17,28 @@ if [ "${container:-}" = podman -a -e /run/dbus/system_bus_socket ]; then
 	systemctl --quiet stop gdm gdm-systemd display-manger gdm-display-manager 2> /dev/null
 fi
 # removing installed files
-if [ "${container:-}" = podman ]; then
-  chroot /host /usr/bin/systemd-tmpfiles --remove /etc/tmpfiles.d/gdm.conf
-else
-  systemd-tmpfiles --root=/host --remove /etc/tmpfiles.d/gdm.conf || true
+if [ -r /host/etc/tmpfiles.d/gdm.conf ]; then 
+  if [ "${container:-}" = podman ]; then
+    chroot /host /usr/bin/systemd-tmpfiles --remove /etc/tmpfiles.d/gdm.conf
+  else
+    systemd-tmpfiles --root=/host --remove /etc/tmpfiles.d/gdm.conf || true
+  fi
 fi
 
-USERID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 3)
-GROUPID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 4)
-rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/{gdm,gdm-systemd}.service,/etc/gdm,etc/dbus-1/system.d/gdm.conf} /host/etc/userdb/{gdm.group,gdm.user,$USERID.user,$GROUPID.group} /host/etc/tmpfiles.d/gdm.conf
+rm -fr /host/{etc/sysconfig/displaymanager,etc/systemd/system/{gdm,gdm-systemd}.service,/etc/gdm,etc/dbus-1/system.d/gdm.conf} /host/etc/userdb/{gdm.group,gdm.user} /host/etc/tmpfiles.d/gdm.conf
+if [ -x /host/usr/bin/userdbctl ]; then
+	USERID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 3)
+	GROUPID=$(chroot /host userdbctl --output classic | grep gdm | cut -d : -f 4)
+	rm -f /host/etc/userdb/{$USERID.user,$GROUPID.group}
+fi
 
 if [ "${container:-}" = podman -a -e /run/dbus/system_bus_socket ]; then
 	chroot /host /usr/bin/systemd-sysext unmerge 2>/dev/null
 	chroot /host /usr/bin/portablectl detach gdm 2>/dev/null
-	systemctl --quiet try-reload-or-restart nscd
+	systemctl -q is-active nscd || systemctl --quiet try-reload-or-restart nscd 2> /dev/null
 	systemctl daemon-reload
 	systemctl reload dbus
-	systemctl restart accounts-daemon
+	systemctl -q is-active accounts-daemon || systemctl restart accounts-daemon 2>/dev/null
 fi
 
 rm -fr /host/var/lib/extensions/gdm /host/var/lib/portables/gdm
