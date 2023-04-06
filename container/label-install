@@ -21,16 +21,19 @@ if [ -f $HOST/usr/bin/gdm ]; then
 fi
 if [ ! -f $HOST/usr/lib*/libnss_systemd.so.* ]; then
     echo "gdm-install: nss-systemd package must be installed on host system."
+    MISSING_PACKAGES=1
 fi
 if [ ! -f $HOST/usr/lib/systemd/systemd-userdbd ]; then
     echo "gdm-install: systemd-experimental package must be installed on host system"
+    MISSING_PACKAGES=1
 fi
 
-if grep -e "enforcing=1" /proc/cmdline; then
-    echo "In /etc/default/grub, please remove the option 'enforcing=1' from GRUB_CMDLINE_LINUX_DEFAULT"
+if [[ $(grep -e "enforcing=1" /proc/cmdline) || $(grep 1 /sys/fs/selinux/enforce) ]]; then
+    echo "In /etc/default/grub, please set option 'enforcing=0' from GRUB_CMDLINE_LINUX_DEFAULT"
     echo "Then run"
     echo "  transactional-update grub.cfg"
     echo "and reboot."
+    MISSING_PACKAGES=1
 fi
 
 # we need accountsservice on the host for now
