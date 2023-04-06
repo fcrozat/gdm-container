@@ -2,6 +2,7 @@
 
 : "${TARGET:=/var/lib/extensions/gdm}"
 ORIGIN=/var/tmp/gdm-layers
+MISSING_PACKAGES=0
 
 if [ ${IMAGE}x != x ]; then
 	SERVER=${IMAGE%%/*}
@@ -19,16 +20,21 @@ systemd-sysext unmerge
 
 if [ ! -f /usr/bin/skopeo ]; then
     echo "skopeo package must be installed on host system"
-    exit 1
+    MISSING_PACKAGES=1
 fi
 if [ ! -f /usr/bin/patch ]; then
     echo "patch package must be installed on host system"
-    exit 1
+    MISSING_PACKAGES=1
 fi
 
 if [ ${PORTABLE}x != x -a ! -f /host/usr/bin/portablectl ]; then
     echo "systemd-portable package must be installed on host system"
-    exit 1
+    MISSING_PACKAGES=1
+fi
+
+if [ $MISSING_PACKAGES -ne 0 ]; then
+	echo "gdm-install: Once missing packages are available on the system, please run again gdm container install script"
+	exit 1
 fi
 
 echo fetching container
@@ -59,18 +65,19 @@ rm -f $TARGET/usr/lib/userdb/*.{user,group}
 
 if [ ${PORTABLE}x = x ]; then
   mkdir -p $TARGET/usr/lib/extension-release.d
-  # ugly tricky, we mimic the host
-  if [ "${container:-}" = podman ]; then
-	grep -E '^ID=|^VERSION_ID=' /host/etc/os-release > $TARGET/usr/lib/extension-release.d/extension-release.gdm
-  else
-	grep -E '^ID=|^VERSION_ID=' /etc/os-release > $TARGET/usr/lib/extension-release.d/extension-release.gdm
-  fi
+  grep -E '^ID=|^VERSION_ID=' /usr/lib/os-release > $TARGET/usr/lib/extension-release.d/extension-release.gdm
   echo "SYSEXT_LEVEL=1" >> $TARGET/usr/lib/extension-release.d/extension-release.gdm
 fi
 mkdir -p $TARGET/usr/etc/xdg
 cp -ra $TARGET/etc/xdg/ $TARGET/usr/etc/
 
 ORIGIN=$TARGET INSTALL_SYSTEM_EXT=1 sh $TARGET/container/label-install
+RETVAL=$?
+
+if [ $RETVAL -ne 0 ]; then
+	rm -fr $TARGET
+	exit 1
+fi
 
 if [ ${PORTABLE}x = x ]; then
 	# workaround for update-alternative not being present
