@@ -134,7 +134,12 @@ fi
         if [ x$INSTALL_SYSTEM_EXT = x1 ]; then
 		mkdir -p $HOST/etc/userdb/
 	        cp -ar ${USERDB_PREFIX}/userdb/* $HOST/etc/userdb/
-	else
+	fi
+	if [  x$INSTALL_SYSTEM_EXT = x -o x$PORTABLE = x1 ]; then
+		if [ x$PORTABLE = x1 ]; then
+			USERDB_PREFIX=$HOST/etc
+		fi
+
 		ln -f -s gdm.user ${USERDB_PREFIX}/userdb/$USERID.user
 		ln -f -s gdm.group ${USERDB_PREFIX}/userdb/$GROUPID.group
 	fi
@@ -156,11 +161,11 @@ fi
     fi
 
 if [ "${container:-}" = podman -a -e /run/dbus/system_bus_socket ]; then
-	systemctl --quiet try-reload-or-restart nscd
+	systemctl -q is-active nscd && systemctl --quiet try-reload-or-restart nscd
 	chroot /host /usr/bin/systemd-tmpfiles -E --create /etc/tmpfiles.d/gdm.conf
 	systemctl daemon-reload
 	systemctl reload dbus
-	systemctl restart accounts-daemon
+	systemctl -q is-active accounts-daemon || systemctl restart accounts-daemon 2>/dev/null
 fi
 
 if [ ${INSTALL_SYSTEM_EXT}x = x ]; then
