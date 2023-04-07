@@ -32,6 +32,11 @@ if [ ${PORTABLE}x != x -a ! -f /host/usr/bin/portablectl ]; then
     MISSING_PACKAGES=1
 fi
 
+if [ ${PORTABLE}x != x -a ! -f /host/usr/libexec/polkit-1/polkitd ]; then
+    echo "polkit package must be installed on host system"
+    MISSING_PACKAGES=1
+fi
+
 if [ $MISSING_PACKAGES -ne 0 ]; then
 	echo "gdm-install: Once missing packages are available on the system, please run again gdm container install script"
 	exit 1
@@ -107,12 +112,17 @@ else
 		cp -r /systemd-sysext/gdm /host/etc/systemd/portable/profile
 	fi
 
-	cp $TARGET/usr/share/dbus-1/system.d/*.conf /host/etc/dbus-1/system.d/
+# for unknown reason, dbus refuses to load those files if using symlink
+#	for l in $TARGET/usr/share/dbus-1/system.d/*.conf ; do
+#		ln -s ${l##/host} /host/etc/dbus-1/system.d/
+#	done
+        cp -a $TARGET/usr/share/dbus-1/system.d/*.conf /host/etc/dbus-1/system.d/
+
 	ln -s accounts-daemon.service $TARGET/usr/lib/systemd/system/gdm-accounts-daemon.service
 	ln -s display-manager.service $TARGET/usr/lib/systemd/system/gdm-display-manager.service
 
 	portablectl attach --profile gdm gdm
-	systemctl stop accounts-daemon
+	systemctl -q is-active accounts-daemon && systemctl stop accounts-daemon
 	echo please run the following commands on host:
 	echo systemctl start gdm-accounts-daemon
 	echo systemctl start gdm-display-manager
