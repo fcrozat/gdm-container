@@ -57,9 +57,70 @@ collisions between things in /etc?
 Does this enable atomic upgrades of the graphical session, or of the
 underlying system, without disturbing the other one?
 
-== Systemd system extension / portable service ==
+== Systemd portable service ==
 
-I haven't been able to get these to work.
+I finally got it to work, at least to start up gdm, with the
+MicroOS-20230413 snapshot and gdm-container commit 64c448dc:
+
+* Install MicroOS with the profile for container host.
+* Tell the installer to set up selinux in permissive mode.
+* Log in as root.
+* Once installed, `transactional-update pkg install accountsservice git systemd-experimental systemd-portable`.
+* `useradd federico` and `passwd federico`.
+* Set up my public SSH key in that account.
+* Reboot.
+* Check out the gdm-container repo, rebuild the image from the `Dockerfile`, `podman container runlabel install-portable myimage`.
+
+Some pending bugs after that:
+
+* Running `id gdm` shows `uid=497 gid=477 groups=4294967295`, which is -1.
+
+* `portablectl attach --profile gdm gdm`
+
+* `systemctl start gdm-accounts-daemon` - succeeds but prints a g_critical:
+
+```
+# journalctl -xeu gdm-accounts-daemon.service:
+
+Apr 14 02:56:52 localhost.localdomain systemd[1]: Starting Accounts Service...
+░░ Subject: A start job for unit gdm-accounts-daemon.service has begun execution
+░░ Defined-By: systemd
+░░ Support: https://lists.freedesktop.org/mailman/listinfo/systemd-devel
+░░ 
+░░ A start job for unit gdm-accounts-daemon.service has begun execution.
+░░ 
+░░ The job identifier is 1329.
+Apr 14 02:56:53 localhost.localdomain accounts-daemon[1245]: started daemon version 22.08.8
+Apr 14 02:56:53 localhost.localdomain systemd[1]: Started Accounts Service.
+░░ Subject: A start job for unit gdm-accounts-daemon.service has finished successfully
+░░ Defined-By: systemd
+░░ Support: https://lists.freedesktop.org/mailman/listinfo/systemd-devel
+░░ 
+░░ A start job for unit gdm-accounts-daemon.service has finished successfully.
+░░ 
+░░ The job identifier is 1329.
+Apr 14 02:56:53 localhost.localdomain accounts-daemon[1245]: g_dbus_interface_skeleton_get_object_path: assertion 'G_IS_DBUS_INTERFACE_SKELETON (interface_)' failed
+```
+
+* `systemctl start gdm-display-manager` - works but GDM doesn't show
+  the user list.  If I type "federico" and my password, it doesn't log
+  me in.  I haven't looked at log messages yet.
+  
+* If I stop everything and `portablectl detach`, then reboot, and do
+  the steps again from `portablectl attach`, `id gdm` shows normal
+  utput without the weird number from above.  GDM shows my username
+  and I can log in, but it's an X session, not a Wayland one.
+
+* Gnome-shell shows me no applications.  If I type `Alt-F2` for the
+  Run dialog, I can run xterm, but I can't launch gnome-terminal:
+  `Error creating terminal: the name org.gnome.Terminal was not
+  provided by any .service files`.  Maybe something is wrong with the
+  user's DBus?  I haven't looked into log files yet.
+
+
+== Systemd system extension ==
+
+Deprecated.
 
 == Sandboxing ==
 
